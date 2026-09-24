@@ -78,6 +78,7 @@ export default async function PostPage({ params }: PostPageProps) {
                                 src={post.author?.image || "/avatar-placeholder.png"}
                                 alt={post.author?.name || "Author"}
                                 fill
+                                sizes="48px"
                                 className="object-cover"
                             />
                         </div>
@@ -94,6 +95,7 @@ export default async function PostPage({ params }: PostPageProps) {
                     src={post.image || "/blog-placeholder.jpg"}
                     alt={post.title}
                     fill
+                    sizes="(max-width: 768px) 100vw, 800px"
                     className="object-cover"
                     priority
                 />

@@ -133,7 +133,7 @@ export function PostForm({ userId }: { userId: string }) {
                         <div className="flex flex-col gap-4">
                             {imageUrl && (
                                 <div className="relative aspect-video rounded-xl overflow-hidden border">
-                                    <Image src={imageUrl} alt="Cover" fill className="object-cover" />
+                                    <Image src={imageUrl} alt="Cover" fill sizes="(max-width: 768px) 100vw, 800px" className="object-cover" />
                                 </div>
                             )}
                             <UploadDropzone
