@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { createPost } from "@/lib/actions/post.actions"
+import { updatePost, createPost } from "@/lib/actions/post.actions"
 import toast from "react-hot-toast"
 import { UploadDropzone } from "@/lib/uploadthing"
 import Image from "next/image"
@@ -25,45 +25,52 @@ const postSchema = z.object({
 
 type PostFormValues = z.infer<typeof postSchema>
 
-export function PostForm({ userId }: { userId: string }) {
+export function PostForm({ userId, initialData }: { userId: string, initialData?: any }) {
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
 
     const form = useForm<PostFormValues>({
         resolver: zodResolver(postSchema),
         defaultValues: {
-            title: "",
-            slug: "",
-            excerpt: "",
-            content: "",
-            image: "",
+            title: initialData?.title || "",
+            slug: initialData?.slug || "",
+            excerpt: initialData?.excerpt || "",
+            content: initialData?.content || "",
+            image: initialData?.image || "",
         },
     })
 
     const imageUrl = form.watch("image")
 
-    // Auto-generate slug from title
+    // Auto-generate slug from title (only if not editing)
     const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const title = e.target.value
         form.setValue("title", title)
-        form.setValue("slug", title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''))
+        if (!initialData) {
+            form.setValue("slug", title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''))
+        }
     }
 
     async function onSubmit(data: PostFormValues) {
         setIsLoading(true)
         try {
-            const res = await createPost({
-                ...data,
-                authorId: userId,
-                tagIds: [], // Empty for now, can implement tag selection later
-            })
+            let res;
+            if (initialData) {
+                res = await updatePost(initialData.id, data);
+            } else {
+                res = await createPost({
+                    ...data,
+                    authorId: userId,
+                    tagIds: [],
+                });
+            }
             
             if (res.success) {
-                toast.success("Post created successfully!")
-                router.push("/admin")
+                toast.success(initialData ? "Post updated successfully!" : "Post created successfully!")
+                router.push("/admin/posts")
                 router.refresh()
             } else {
-                toast.error(res.error || "Failed to create post")
+                toast.error(res.error || "Failed to save post")
             }
         } catch (error) {
             toast.error("Something went wrong.")
@@ -95,7 +102,7 @@ export function PostForm({ userId }: { userId: string }) {
                     <div className="space-y-2">
                         <Label>Content</Label>
                         <Editor 
-                            initialContent=""
+                            initialContent={initialData?.content || ""}
                             onChange={(content) => form.setValue("content", content)}
                         />
                         {form.formState.errors.content && (
@@ -156,7 +163,7 @@ export function PostForm({ userId }: { userId: string }) {
 
             <div className="flex justify-end pt-6 border-t border-border/50">
                 <Button type="submit" size="lg" disabled={isLoading} className="w-full sm:w-auto">
-                    {isLoading ? "Publishing..." : "Publish Post"}
+                    {isLoading ? (initialData ? "Saving Changes..." : "Publishing...") : (initialData ? "Save Changes" : "Publish Post")}
                 </Button>
             </div>
         </form>
