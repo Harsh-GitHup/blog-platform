@@ -1,10 +1,11 @@
+// force HMR
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Plus, ArrowLeft, Eye } from "lucide-react"
+import { Plus, ArrowLeft, Eye, Pencil } from "lucide-react"
 import { formatDate } from "@/lib/utils"
 import { DeletePostButton } from "@/components/admin/DeletePostButton"
 
@@ -82,6 +83,11 @@ export default async function AdminPostsPage() {
                                         </td>
                                         <td className="px-6 py-4 text-right">
                                             <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <Link href={`/admin/posts/${post.id}/edit`}>
+                                                    <Button variant="ghost" size="icon" className="rounded-full text-muted-foreground hover:text-blue-500">
+                                                        <Pencil className="w-4 h-4" />
+                                                    </Button>
+                                                </Link>
                                                 <Link href={`/blog/${post.slug}`}>
                                                     <Button variant="ghost" size="icon" className="rounded-full text-muted-foreground hover:text-primary">
                                                         <Eye className="w-4 h-4" />

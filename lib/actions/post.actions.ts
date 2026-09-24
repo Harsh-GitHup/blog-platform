@@ -42,6 +42,23 @@ export async function createPost(data: CreatePostInput) {
     }
 }
 
+export async function updatePost(id: string, data: Partial<CreatePostInput>) {
+    try {
+        const post = await db.post.update({
+            where: { id },
+            data,
+        })
+        revalidatePath("/")
+        revalidatePath("/blog")
+        revalidatePath(`/blog/${post.slug}`)
+        revalidatePath("/admin/posts")
+        return { success: true, post }
+    } catch (error) {
+        console.error("Failed to update post:", error)
+        return { success: false, error: "Database error occurred" }
+    }
+}
+
 export async function getPublishedPosts() {
     try {
         const posts = await db.post.findMany({
