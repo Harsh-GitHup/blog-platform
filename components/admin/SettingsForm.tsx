@@ -58,7 +58,7 @@ export function SettingsForm({ user }: { user: { id: string; name: string; image
                 <div className="flex flex-col gap-4">
                     {imageUrl && (
                         <div className="relative w-24 h-24 rounded-full overflow-hidden border">
-                            <Image src={imageUrl} alt="Profile" fill className="object-cover" />
+                            <Image src={imageUrl} alt="Profile" fill sizes="96px" className="object-cover" />
                         </div>
                     )}
                     <UploadDropzone
