@@ -18,9 +18,12 @@ const registerSchema = z.object({
 
 type RegisterValues = z.infer<typeof registerSchema>
 
+import { Eye, EyeOff } from "lucide-react"
+
 export default function RegisterPage() {
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
+    const [showPassword, setShowPassword] = useState(false)
 
     const {
         register,
@@ -79,13 +82,22 @@ export default function RegisterPage() {
 
                 <div>
                     <label className="block text-sm font-medium mb-1">Password</label>
-                    <input
-                        {...register("password")}
-                        type="password"
-                        autoComplete="new-password"
-                        className="w-full p-3 rounded-lg border dark:bg-gray-800 dark:border-gray-700 focus:ring-2 ring-blue-500 outline-none"
-                        placeholder="••••••••"
-                    />
+                    <div className="relative">
+                        <input
+                            {...register("password")}
+                            type={showPassword ? "text" : "password"}
+                            autoComplete="new-password"
+                            className="w-full p-3 pr-10 rounded-lg border dark:bg-gray-800 dark:border-gray-700 focus:ring-2 ring-blue-500 outline-none"
+                            placeholder="••••••••"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                        >
+                            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                        </button>
+                    </div>
                     {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
                 </div>
 
