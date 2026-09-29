@@ -80,7 +80,7 @@ export async function getPublishedPosts() {
         }))
     } catch (error) {
         console.error("FETCH_POSTS_ERROR: Database unavailable.")
-        return []
+        throw new Error("Failed to fetch posts")
     }
 }
 
