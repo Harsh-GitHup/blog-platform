@@ -143,3 +143,13 @@ npx prisma db push
 npm run dev
 ```
 Navigate to `http://localhost:3000` to view the application.
+
+---
+
+## 👨‍💻 Author
+
+Built with ♥ by **[Harsh Kesharwani](https://github.com/Harsh-GitHup)**
+
+- **GitHub:** [@Harsh-GitHup](https://github.com/Harsh-GitHup)
+- **LinkedIn:** [Harsh Kesharwani](https://www.linkedin.com/in/harshkesharwani/)
+- **X (Twitter):** [@HarshKesha91325](https://x.com/HarshKesha91325/)
