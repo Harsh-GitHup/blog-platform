@@ -13,8 +13,9 @@ export const metadata = {
     title: "Manage Posts",
 }
 
-export default async function AdminPostsPage() {
+export default async function AdminPostsPage({ params }: { params: Promise<{ username: string }> }) {
     const session = await getServerSession(authOptions)
+    const { username } = await params
 
     if (!session || session.user.role !== "ADMIN") {
         redirect("/")
@@ -30,7 +31,7 @@ export default async function AdminPostsPage() {
         <div className="space-y-8 max-w-6xl mx-auto">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
-                    <Link href="/admin">
+                    <Link href={`/${username}`}>
                         <Button variant="ghost" size="icon" className="rounded-full">
                             <ArrowLeft className="w-5 h-5" />
                         </Button>
@@ -41,7 +42,7 @@ export default async function AdminPostsPage() {
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Link href="/admin/posts/new">
+                    <Link href={`/${username}/posts/new`}>
                         <Button size="sm" className="gap-2">
                             <Plus className="w-4 h-4" />
                             New Post
@@ -87,7 +88,7 @@ export default async function AdminPostsPage() {
                                         </td>
                                         <td className="px-6 py-4 text-right">
                                             <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <Link href={`/admin/posts/${post.id}/edit`}>
+                                                <Link href={`/${username}/posts/${post.id}/edit`}>
                                                     <Button variant="ghost" size="icon" className="rounded-full text-muted-foreground hover:text-blue-500">
                                                         <Pencil className="w-4 h-4" />
                                                     </Button>
@@ -112,7 +113,7 @@ export default async function AdminPostsPage() {
                         </div>
                         <p className="text-lg font-medium text-foreground mb-1">No posts yet</p>
                         <p className="text-sm">Get started by creating your first article!</p>
-                        <Link href="/admin/posts/new" className="mt-6">
+                        <Link href={`/${username}/posts/new`} className="mt-6">
                             <Button className="shadow-sm">Create New Post</Button>
                         </Link>
                     </div>

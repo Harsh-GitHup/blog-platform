@@ -3,6 +3,8 @@
 
 import { db } from "@/lib/db"
 import { revalidatePath } from "next/cache"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 
 export type CreatePostInput = {
     title: string
@@ -17,6 +19,11 @@ export type CreatePostInput = {
 
 export async function createPost(data: CreatePostInput) {
     try {
+        const session = await getServerSession(authOptions)
+        if (!session?.user?.id || session.user.id !== data.authorId) {
+            return { success: false, error: "Unauthorized" }
+        }
+
         const post = await db.post.create({
             data: {
                 title: data.title,
@@ -44,6 +51,16 @@ export async function createPost(data: CreatePostInput) {
 
 export async function updatePost(id: string, data: Partial<CreatePostInput>) {
     try {
+        const session = await getServerSession(authOptions)
+        if (!session?.user?.id) {
+            return { success: false, error: "Unauthorized" }
+        }
+
+        const existingPost = await db.post.findUnique({ where: { id } })
+        if (!existingPost || existingPost.authorId !== session.user.id) {
+            return { success: false, error: "Unauthorized or post not found" }
+        }
+
         const post = await db.post.update({
             where: { id },
             data,
@@ -51,7 +68,7 @@ export async function updatePost(id: string, data: Partial<CreatePostInput>) {
         revalidatePath("/")
         revalidatePath("/blog")
         revalidatePath(`/blog/${post.slug}`)
-        revalidatePath("/admin/posts")
+        revalidatePath(`/${session.user.username || 'admin'}/posts`)
         return { success: true, post }
     } catch (error) {
         console.error("Failed to update post:", error)
@@ -65,7 +82,7 @@ export async function getPublishedPosts() {
             where: { status: "PUBLISHED" },
             orderBy: { publishedAt: "desc" },
             include: {
-                author: { select: { name: true, image: true } },
+                author: { select: { name: true, image: true, username: true } },
                 category: true,
                 tags: true,
             },
@@ -86,6 +103,16 @@ export async function getPublishedPosts() {
 
 export async function deletePost(id: string) {
     try {
+        const session = await getServerSession(authOptions)
+        if (!session?.user?.id) {
+            return { success: false, error: "Unauthorized" }
+        }
+
+        const existingPost = await db.post.findUnique({ where: { id } })
+        if (!existingPost || existingPost.authorId !== session.user.id) {
+            return { success: false, error: "Unauthorized or post not found" }
+        }
+
         const comments = await db.comment.findMany({ where: { postId: id }, select: { id: true } })
         const commentIds = comments.map(c => c.id)
 
@@ -96,7 +123,7 @@ export async function deletePost(id: string) {
         await db.like.deleteMany({ where: { postId: id } })
         
         await db.post.delete({ where: { id } })
-        revalidatePath("/admin")
+        revalidatePath(`/${session.user.username || 'admin'}`)
         return { success: true }
     } catch (error: any) {
         console.error("DELETE_POST_ERROR:", error)

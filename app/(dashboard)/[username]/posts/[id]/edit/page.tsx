@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { db } from "@/lib/db"
 
 interface EditPostPageProps {
-    params: Promise<{ id: string }>
+    params: Promise<{ id: string, username: string }>
 }
 
 // export const metadata = {
@@ -23,7 +23,7 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
         redirect("/")
     }
 
-    const { id } = await params
+    const { id, username } = await params
     
     const post = await db.post.findUnique({
         where: { id }
@@ -36,7 +36,7 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
     return (
         <div className="max-w-5xl mx-auto space-y-8">
             <div className="flex items-center gap-4 border-b border-border/50 pb-6">
-                <Link href="/admin/posts">
+                <Link href={`/${username}/posts`}>
                     <Button variant="ghost" size="icon" className="rounded-full">
                         <ArrowLeft className="w-5 h-5" />
                     </Button>
@@ -48,7 +48,7 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
             </div>
 
             <div className="bg-card rounded-2xl border border-border/50 p-6 md:p-8 shadow-sm">
-                <PostForm userId={session.user.id} initialData={post} />
+                <PostForm userId={session.user.id} username={username} initialData={post} />
             </div>
         </div>
     )

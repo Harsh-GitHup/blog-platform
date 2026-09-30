@@ -10,7 +10,7 @@ export function FooterDashboardLink() {
 
     return (
         <li>
-            <Link href="/admin" className="hover:text-primary transition-colors">
+            <Link href={`/${session.user.username || 'admin'}`} className="hover:text-primary transition-colors">
                 Dashboard
             </Link>
         </li>

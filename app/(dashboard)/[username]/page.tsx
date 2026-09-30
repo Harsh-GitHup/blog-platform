@@ -12,8 +12,9 @@ export const metadata = {
     title: "Dashboard",
 }
 
-export default async function AdminDashboard() {
+export default async function AdminDashboard({ params }: { params: Promise<{ username: string }> }) {
     const session = await getServerSession(authOptions)
+    const { username } = await params
 
     // Check if logged in AND if they are an ADMIN
     if (!session || session.user.role !== "ADMIN") {
@@ -68,16 +69,16 @@ export default async function AdminDashboard() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold font-heading">Dashboard Overview</h1>
-                    <p className="text-muted-foreground mt-1 text-sm">Welcome back, {session.user.name || "Admin"}</p>
+                    <p className="text-muted-foreground mt-1 text-sm">Welcome back, {session.user.name || username}</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Link href="/admin/settings">
+                    <Link href={`/${username}/settings`}>
                         <Button variant="outline" size="sm" className="gap-2">
                             <Settings className="w-4 h-4" />
                             Settings
                         </Button>
                     </Link>
-                    <Link href="/admin/posts/new">
+                    <Link href={`/${username}/posts/new`}>
                         <Button size="sm" className="gap-2">
                             <Plus className="w-4 h-4" />
                             New Post
@@ -111,7 +112,7 @@ export default async function AdminDashboard() {
             <div className="rounded-2xl border bg-card overflow-hidden">
                 <div className="p-6 border-b border-border/50 flex items-center justify-between">
                     <h2 className="text-lg font-semibold">Recent Posts</h2>
-                    <Link href="/admin/posts" className="text-sm text-primary hover:underline font-medium">
+                    <Link href={`/${username}/posts`} className="text-sm text-primary hover:underline font-medium">
                         View all
                     </Link>
                 </div>

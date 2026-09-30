@@ -1,5 +1,6 @@
 import { NextAuthOptions, DefaultSession } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
+import GithubProvider from "next-auth/providers/github"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { db } from "@/lib/db"
@@ -10,6 +11,7 @@ declare module "next-auth" {
         user: {
             id: string
             role?: string
+            username?: string | null
         } & DefaultSession["user"]
     }
 }
@@ -23,6 +25,10 @@ export const authOptions: NextAuthOptions = {
             clientId: process.env.GOOGLE_CLIENT_ID!,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
         }),
+        GithubProvider({
+            clientId: process.env.GITHUB_ID!,
+            clientSecret: process.env.GITHUB_SECRET!,
+        }),
         CredentialsProvider({
             name: "Credentials",
             credentials: {
@@ -33,8 +39,13 @@ export const authOptions: NextAuthOptions = {
                 if (!credentials?.email || !credentials?.password) {
                     throw new Error("Invalid credentials")
                 }
-                const user = await db.user.findUnique({
-                    where: { email: credentials.email },
+                const user = await db.user.findFirst({
+                    where: { 
+                        OR: [
+                            { email: credentials.email },
+                            { username: credentials.email }
+                        ]
+                    },
                 })
                 if (!user || !user.password) {
                     throw new Error("Invalid credentials")
@@ -58,6 +69,7 @@ export const authOptions: NextAuthOptions = {
             if (user) {
                 token.id = user.id
                 token.role = (user as any).role
+                token.username = (user as any).username
             }
             return token
         },
@@ -65,6 +77,7 @@ export const authOptions: NextAuthOptions = {
             if (session.user) {
                 session.user.id = token.id as string
                 session.user.role = token.role as string
+                session.user.username = token.username as string | null
             }
             return session
         },

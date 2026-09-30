@@ -11,8 +11,9 @@ import { Button } from "@/components/ui/button"
 //     title: "New Post",
 // }
 
-export default async function NewPostPage() {
+export default async function NewPostPage({ params }: { params: Promise<{ username: string }> }) {
     const session = await getServerSession(authOptions)
+    const { username } = await params
 
     if (!session || session.user.role !== "ADMIN") {
         redirect("/")
@@ -21,7 +22,7 @@ export default async function NewPostPage() {
     return (
         <div className="max-w-5xl mx-auto space-y-8">
             <div className="flex items-center gap-4">
-                <Link href="/admin">
+                <Link href={`/${username}/posts`}>
                     <Button variant="ghost" size="icon" className="rounded-full">
                         <ArrowLeft className="w-5 h-5" />
                     </Button>
@@ -33,7 +34,7 @@ export default async function NewPostPage() {
             </div>
             
             <div className="bg-card border rounded-2xl p-6 shadow-sm">
-                <PostForm userId={session.user.id} />
+                <PostForm userId={session.user.id} username={username} />
             </div>
         </div>
     )

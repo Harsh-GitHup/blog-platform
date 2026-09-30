@@ -25,7 +25,7 @@ const postSchema = z.object({
 
 type PostFormValues = z.infer<typeof postSchema>
 
-export function PostForm({ userId, initialData }: { userId: string, initialData?: any }) {
+export function PostForm({ userId, username, initialData }: { userId: string, username: string, initialData?: any }) {
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
 
@@ -67,7 +67,7 @@ export function PostForm({ userId, initialData }: { userId: string, initialData?
             
             if (res.success) {
                 toast.success(initialData ? "Post updated successfully!" : "Post created successfully!")
-                router.push("/admin/posts")
+                router.push(`/${username}/posts`)
                 router.refresh()
             } else {
                 toast.error(res.error || "Failed to save post")

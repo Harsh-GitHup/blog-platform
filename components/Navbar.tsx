@@ -31,7 +31,7 @@ export default function Navbar() {
 
     const navLinks = [
         { name: "Explore", href: "/blog" },
-        ...(session ? [{ name: "Dashboard", href: "/admin" }] : []),
+        ...(session ? [{ name: "Dashboard", href: `/${session.user.username || 'admin'}` }] : []),
     ]
 
     return (

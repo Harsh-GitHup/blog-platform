@@ -4,25 +4,34 @@
 import { db } from "@/lib/db"
 import bcrypt from "bcryptjs"
 import { revalidatePath } from "next/cache"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 
 // Define the expected shape of the data
 type RegisterInput = {
     name?: string;
     email: string;
     password: string;
+    username: string;
 }
 
 export async function registerUser(data: RegisterInput) {
     try {
-        const { email, password, name } = data
+        const { email, password, name, username } = data
 
         // Fail-safe
-        if (!email || !password) {
+        if (!email || !password || !username) {
             return { success: false, error: "Missing required fields" }
         }
+        if (!/^[a-zA-Z0-9_]+$/.test(username) || username.length < 5) {
+            return { success: false, error: "Invalid username format. Must be at least 5 characters and alphanumeric." }
+        }
 
-        const existingUser = await db.user.findUnique({ where: { email } })
-        if (existingUser) return { success: false, error: "Email already exists" }
+        const existingEmail = await db.user.findUnique({ where: { email } })
+        if (existingEmail) return { success: false, error: "Email already exists" }
+        
+        const existingUsername = await db.user.findUnique({ where: { username } })
+        if (existingUsername) return { success: false, error: "Username already taken" }
 
         const hashedPassword = await bcrypt.hash(password, 12)
 
@@ -30,6 +39,7 @@ export async function registerUser(data: RegisterInput) {
             data: {
                 email,
                 name,
+                username,
                 password: hashedPassword,
                 role: "ADMIN"
             }
@@ -42,17 +52,43 @@ export async function registerUser(data: RegisterInput) {
     }
 }
 
-export async function updateProfile(userId: string, data: { name?: string; image?: string }) {
+export async function updateProfile(userId: string, data: { name?: string; image?: string; username?: string; email?: string }) {
     try {
+        const session = await getServerSession(authOptions)
+        if (!session?.user?.id || session.user.id !== userId) {
+            return { success: false, error: "Unauthorized" }
+        }
+
+        if (data.username) {
+            if (!/^[a-zA-Z0-9_]+$/.test(data.username) || data.username.length < 5) {
+                return { success: false, error: "Invalid username format. Must be at least 5 characters and alphanumeric." }
+            }
+            
+            // Check if username is already taken by another user
+            const existingUsername = await db.user.findUnique({ where: { username: data.username } })
+            if (existingUsername && existingUsername.id !== userId) {
+                return { success: false, error: "Username already taken" }
+            }
+        }
+        
+        if (data.email) {
+            const existingEmail = await db.user.findUnique({ where: { email: data.email } })
+            if (existingEmail && existingEmail.id !== userId) {
+                return { success: false, error: "Email already exists" }
+            }
+        }
+
         await db.user.update({
             where: { id: userId },
             data: {
                 ...(data.name && { name: data.name }),
                 ...(data.image && { image: data.image }),
+                ...(data.username && { username: data.username }),
+                ...(data.email && { email: data.email }),
             }
         })
         
-        revalidatePath("/admin/settings")
+        revalidatePath(`/${session.user.username || 'admin'}/settings`)
         return { success: true }
     } catch (error) {
         console.error("UPDATE_PROFILE_ERROR", error)
@@ -62,6 +98,11 @@ export async function updateProfile(userId: string, data: { name?: string; image
 
 export async function updatePassword(userId: string, currentPassword?: string, newPassword?: string) {
     try {
+        const session = await getServerSession(authOptions)
+        if (!session?.user?.id || session.user.id !== userId) {
+            return { success: false, error: "Unauthorized" }
+        }
+
         if (!newPassword || newPassword.length < 6) {
             return { success: false, error: "New password must be at least 6 characters" }
         }
