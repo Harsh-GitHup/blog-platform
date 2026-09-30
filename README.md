@@ -9,15 +9,24 @@ A production-ready, high-performance blog platform built with Next.js 15 App Rou
 - **Advanced Auth**: NextAuth.js integration with robust role-based access control (RBAC). Configuration strictly decoupled for App Router build compliance.
 - **MongoDB Native**: Optimized Prisma schema using `ObjectId` and native array relations.
 - **Advanced Comment System**:
-  - Full support for nested, recursive comment replies.
+  - Full support for infinite nested, recursive comment replies.
   - Interactive "Like" functionality for comments.
   - Distinguishes between registered users (shows name/avatar) and Anonymous users.
+- **Multi-Author Architecture**:
+  - Dynamic `/[username]` routing for individualized user dashboards.
+  - Strict data-isolation ensuring users only view, edit, and delete their own posts and stats.
+- **Robust Media Management**:
+  - Secure file uploads via UploadThing protected by NextAuth middleware.
+  - Built-in Orphaned Image Cleanup system to permanently delete unused uploaded images.
 - **Rich Text Editor**: Integrated Tiptap editor for an elegant, block-style writing experience.
-- **Secure File Uploads**: UploadThing integration protected by server-side NextAuth middleware, ensuring only authorized admins can upload media.
 - **Real-Time Ready**: Pre-configured Pusher integration for real-time notifications and updates.
-- **Refined UI/UX**: Splendid header layout with title on the left and author/avatar/date perfectly aligned on the right. Beautiful dark mode with a custom HSL color palette.
+- **Refined UI/UX**: 
+  - Dynamic page titles and standardized layouts across auth and informational pages (About, Contact).
+  - Splendid header layout with title on the left and author/avatar/date perfectly aligned on the right. 
+  - Reusable confirmation modals to prevent accidental deletions.
+  - Beautiful dark mode with a custom HSL color palette.
 - **Admin Dashboard**: Comprehensive management dashboard to view statistics, manage posts, and update settings.
-- **Robust Forms**: Type-safe form validation using React Hook Form and Zod.
+- **Robust Forms**: Type-safe form validation using React Hook Form and Zod with intuitive "Cancel" fallbacks.
 
 ## 💻 Local Development
 
