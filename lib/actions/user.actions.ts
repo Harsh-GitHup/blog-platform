@@ -59,3 +59,42 @@ export async function updateProfile(userId: string, data: { name?: string; image
         return { success: false, error: "Failed to update profile" }
     }
 }
+
+export async function updatePassword(userId: string, currentPassword?: string, newPassword?: string) {
+    try {
+        if (!newPassword || newPassword.length < 6) {
+            return { success: false, error: "New password must be at least 6 characters" }
+        }
+
+        const user = await db.user.findUnique({
+            where: { id: userId }
+        })
+
+        if (!user) {
+            return { success: false, error: "User not found" }
+        }
+
+        // If user has a password set, they must provide the current password
+        if (user.password) {
+            if (!currentPassword) {
+                return { success: false, error: "Current password is required" }
+            }
+            const isValid = await bcrypt.compare(currentPassword, user.password)
+            if (!isValid) {
+                return { success: false, error: "Incorrect current password" }
+            }
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 12)
+
+        await db.user.update({
+            where: { id: userId },
+            data: { password: hashedPassword }
+        })
+
+        return { success: true }
+    } catch (error) {
+        console.error("UPDATE_PASSWORD_ERROR", error)
+        return { success: false, error: "Failed to update password" }
+    }
+}

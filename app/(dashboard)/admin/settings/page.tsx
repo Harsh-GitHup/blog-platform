@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { SettingsForm } from "@/components/admin/SettingsForm"
+import { PasswordForm } from "@/components/admin/PasswordForm"
 import { db } from "@/lib/db"
 
 export const metadata = {
@@ -27,16 +28,24 @@ export default async function SettingsPage() {
     return (
         <div className="max-w-2xl mx-auto space-y-8">
             <div>
-                <h1 className="text-3xl font-bold font-heading">Profile Settings</h1>
+                <h1 className="text-3xl font-bold font-heading">Settings</h1>
                 <p className="text-muted-foreground mt-2">Manage your account settings and preferences.</p>
             </div>
             
-            <div className="bg-card border rounded-2xl p-6 shadow-sm">
-                <SettingsForm user={{
-                    id: user.id,
-                    name: user.name || "",
-                    image: user.image || ""
-                }} />
+            <div className="space-y-8">
+                <section className="bg-card border rounded-2xl p-6 shadow-sm">
+                    <h2 className="text-xl font-bold mb-4">Profile</h2>
+                    <SettingsForm user={{
+                        id: user.id,
+                        name: user.name || "",
+                        image: user.image || ""
+                    }} />
+                </section>
+
+                <section className="bg-card border rounded-2xl p-6 shadow-sm">
+                    <h2 className="text-xl font-bold mb-4">Change Password</h2>
+                    <PasswordForm userId={user.id} />
+                </section>
             </div>
         </div>
     )
