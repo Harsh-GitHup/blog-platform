@@ -1,37 +1,63 @@
 // app\(auth)\register\page.tsx
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 import * as z from "zod"
 import { toast } from "react-hot-toast"
-import { registerUser } from "@/lib/actions/user.actions" // You need to create this action
+import { registerUser } from "@/lib/actions/user.actions" 
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card } from "@/components/ui/card"
 
 const registerSchema = z.object({
-    name: z.string().min(2, "Name must be at least 2 characters"),
+    name: z.string().min(5, "Name must be at least 5 characters"),
     email: z.string().email("Invalid email address"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
+    password: z.string().min(8, "Password must be at least 8 characters").max(32, "Password must be at most 32 characters"),
+    username: z.string().min(5, "Username must be at least 5 characters").regex(/^[a-zA-Z0-9_]+$/, "Only letters, numbers, and underscores allowed"),
 })
 
 type RegisterValues = z.infer<typeof registerSchema>
 
-import { Eye, EyeOff } from "lucide-react"
+import { Eye, EyeOff, CheckCircle2 } from "lucide-react"
 
 export default function RegisterPage() {
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
+    const [passwordStrength, setPasswordStrength] = useState(0)
 
     const {
         register,
         handleSubmit,
+        control,
         formState: { errors },
     } = useForm<RegisterValues>({
         resolver: zodResolver(registerSchema),
     })
+
+    const watchPassword = useWatch({ control, name: "password", defaultValue: "" })
+
+    useEffect(() => {
+        let score = 0
+        if (watchPassword.length >= 8) score += 1
+        if (/[A-Z]/.test(watchPassword)) score += 1
+        if (/[0-9]/.test(watchPassword)) score += 1
+        if (/[^A-Za-z0-9]/.test(watchPassword)) score += 1
+        setPasswordStrength(score)
+    }, [watchPassword])
+
+    const getStrengthColor = () => {
+        if (passwordStrength === 0) return "bg-border"
+        if (passwordStrength === 1) return "bg-red-500"
+        if (passwordStrength === 2) return "bg-orange-500"
+        if (passwordStrength === 3) return "bg-yellow-500"
+        return "bg-green-500"
+    }
 
     const onSubmit = async (data: RegisterValues) => {
         setIsLoading(true)
@@ -51,71 +77,92 @@ export default function RegisterPage() {
     }
 
     return (
-        <div className="max-w-md mx-auto mt-16 p-8 border rounded-2xl shadow-sm bg-white dark:bg-gray-900 dark:border-gray-800">
-            <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold">Create Account</h1>
-                <p className="text-gray-500 mt-2">Join our community of writers</p>
+        <Card className="w-full max-w-[400px] mx-auto mt-16 sm:mt-20 p-6 sm:p-8 bg-background">
+            <div className="text-center mb-6">
+                <h1 className="text-[26px] font-bold text-foreground tracking-tight mb-1">Create Account</h1>
+                <p className="text-[13px] text-muted-foreground">Join our community of writers</p>
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div>
-                    <label className="block text-sm font-medium mb-1">Full Name</label>
-                    <input
+                    <Label>Full Name</Label>
+                    <Input
                         {...register("name")}
-                        className="w-full p-3 rounded-lg border dark:bg-gray-800 dark:border-gray-700 focus:ring-2 ring-blue-500 outline-none"
                         placeholder="John Doe"
                     />
-                    {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>}
+                    {errors.name && <p className="text-destructive text-xs mt-1">{errors.name.message}</p>}
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium mb-1">Email Address</label>
-                    <input
+                    <Label>Email Address</Label>
+                    <Input
                         {...register("email")}
                         type="email"
                         autoComplete="email"
-                        className="w-full p-3 rounded-lg border dark:bg-gray-800 dark:border-gray-700 focus:ring-2 ring-blue-500 outline-none"
                         placeholder="name@example.com"
                     />
-                    {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+                    {errors.email && <p className="text-destructive text-xs mt-1">{errors.email.message}</p>}
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium mb-1">Password</label>
+                    <Label>Password</Label>
                     <div className="relative">
-                        <input
+                        <Input
                             {...register("password")}
                             type={showPassword ? "text" : "password"}
                             autoComplete="new-password"
-                            className="w-full p-3 pr-10 rounded-lg border dark:bg-gray-800 dark:border-gray-700 focus:ring-2 ring-blue-500 outline-none"
+                            className="pr-10 tracking-wider"
                             placeholder="••••••••"
                         />
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                         >
-                            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         </button>
                     </div>
-                    {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
+                    
+                    {/* Password Strength Checker */}
+                    {watchPassword.length > 0 && (
+                        <div className="mt-2 flex gap-1.5 h-1">
+                            {[1, 2, 3, 4].map((level) => (
+                                <div 
+                                    key={level} 
+                                    className={`h-full flex-1 rounded-full transition-colors ${passwordStrength >= level ? getStrengthColor() : 'bg-muted'}`} 
+                                />
+                            ))}
+                        </div>
+                    )}
+                    {errors.password && <p className="text-destructive text-xs mt-1">{errors.password.message}</p>}
                 </div>
 
-                <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition disabled:opacity-50"
-                >
-                    {isLoading ? "Creating Account..." : "Register"}
-                </button>
+                <div>
+                    <Label>Username</Label>
+                    <Input
+                        {...register("username")}
+                        placeholder="johndoe123"
+                    />
+                    {errors.username && <p className="text-destructive text-xs mt-1">{errors.username.message}</p>}
+                </div>
+
+                <div className="pt-2">
+                    <Button
+                        type="submit"
+                        disabled={isLoading}
+                        className="w-full"
+                    >
+                        {isLoading ? "Creating Account..." : "Sign up"}
+                    </Button>
+                </div>
             </form>
 
-            <div className="mt-6 text-center text-sm">
-                <span className="text-gray-500">Already have an account? </span>
-                <Link href="/login" className="text-blue-600 font-semibold hover:underline">
+            <div className="mt-6 text-center text-[13px]">
+                <span className="text-muted-foreground">Already have an account? </span>
+                <Link href="/login" className="text-primary font-bold hover:underline">
                     Sign In
                 </Link>
             </div>
-        </div>
+        </Card>
     )
 }

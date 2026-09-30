@@ -1,14 +1,15 @@
 "use client"
 
 import { useState, Suspense } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { toast } from "react-hot-toast"
 import { resetPassword } from "@/lib/actions/user.actions"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Loader2, Eye, EyeOff } from "lucide-react"
 import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card } from "@/components/ui/card"
 
 function ResetPasswordForm() {
     const router = useRouter()
@@ -23,13 +24,15 @@ function ResetPasswordForm() {
 
     if (!token) {
         return (
-            <div className="w-full max-w-md mx-auto p-8 bg-card border rounded-2xl shadow-sm text-center space-y-4">
-                <h2 className="text-2xl font-bold tracking-tight text-red-500">Invalid Link</h2>
-                <p className="text-muted-foreground">The password reset link is missing or invalid.</p>
-                <Link href="/forgot-password">
-                    <Button variant="outline" className="mt-4 w-full">Request new link</Button>
+            <Card className="w-full max-w-[400px] mx-auto mt-16 sm:mt-20 p-6 sm:p-8 bg-background text-center">
+                <h2 className="text-[26px] font-bold tracking-tight text-destructive mb-1">Invalid Link</h2>
+                <p className="text-[13px] text-muted-foreground mb-6">The password reset link is missing or invalid.</p>
+                <Link href="/forgot-password" className="block">
+                    <Button variant="outline" className="w-full">
+                        Request new link
+                    </Button>
                 </Link>
-            </div>
+            </Card>
         )
     }
 
@@ -62,31 +65,33 @@ function ResetPasswordForm() {
 
     if (isSuccess) {
         return (
-            <div className="w-full max-w-md mx-auto space-y-8 p-8 bg-card border rounded-2xl shadow-sm text-center">
-                <div className="space-y-2">
-                    <h2 className="text-2xl font-bold tracking-tight text-green-600">Password Reset!</h2>
-                    <p className="text-muted-foreground">
+            <Card className="w-full max-w-[400px] mx-auto mt-16 sm:mt-20 p-6 sm:p-8 bg-background text-center">
+                <div className="mb-6">
+                    <h2 className="text-[26px] font-bold tracking-tight text-green-600 dark:text-green-500 mb-1">Password Reset!</h2>
+                    <p className="text-[13px] text-muted-foreground">
                         Your password has been successfully updated.
                     </p>
                 </div>
-                <Link href="/login">
-                    <Button className="w-full mt-4">Go to Login</Button>
+                <Link href="/login" className="block">
+                    <Button className="w-full">
+                        Go to Login
+                    </Button>
                 </Link>
-            </div>
+            </Card>
         )
     }
 
     return (
-        <div className="w-full max-w-md mx-auto space-y-8 p-8 bg-card border rounded-2xl shadow-sm">
-            <div className="space-y-2 text-center">
-                <h2 className="text-3xl font-heading font-bold tracking-tight">Reset Password</h2>
-                <p className="text-muted-foreground">
+        <Card className="w-full max-w-[400px] mx-auto mt-16 sm:mt-20 p-6 sm:p-8 bg-background">
+            <div className="text-center mb-6">
+                <h2 className="text-[26px] font-bold text-foreground tracking-tight mb-1">Reset Password</h2>
+                <p className="text-[13px] text-muted-foreground">
                     Enter your new password below.
                 </p>
             </div>
 
             <form onSubmit={onSubmit} className="space-y-4">
-                <div className="space-y-2">
+                <div>
                     <Label htmlFor="password">New Password</Label>
                     <div className="relative">
                         <Input
@@ -96,18 +101,19 @@ function ResetPasswordForm() {
                             onChange={(e) => setPassword(e.target.value)}
                             required
                             disabled={isLoading}
+                            className="pr-10 tracking-wider"
                         />
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                         >
-                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         </button>
                     </div>
                 </div>
                 
-                <div className="space-y-2">
+                <div>
                     <Label htmlFor="confirmPassword">Confirm Password</Label>
                     <Input
                         id="confirmPassword"
@@ -116,15 +122,22 @@ function ResetPasswordForm() {
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         required
                         disabled={isLoading}
+                        className="tracking-wider"
                     />
                 </div>
                 
-                <Button type="submit" className="w-full h-11" disabled={isLoading}>
-                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Update Password
-                </Button>
+                <div className="pt-2">
+                    <Button 
+                        type="submit" 
+                        className="w-full" 
+                        disabled={isLoading}
+                    >
+                        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Update Password
+                    </Button>
+                </div>
             </form>
-        </div>
+        </Card>
     )
 }
 

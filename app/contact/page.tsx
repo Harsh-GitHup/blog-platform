@@ -1,5 +1,10 @@
 import { Metadata } from "next"
 import { Mail, MapPin, Phone } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
+import { Card } from "@/components/ui/card"
 
 export const metadata: Metadata = {
     title: "Contact Us | Blog Platform",
@@ -56,46 +61,43 @@ export default function ContactPage() {
                 </div>
 
                 {/* Contact Form */}
-                <div className="bg-card border rounded-2xl p-6 sm:p-8 shadow-lg">
+                <Card className="p-6 sm:p-8 border-border">
                     <form className="space-y-6">
                         <div>
-                            <label htmlFor="name" className="block text-sm font-medium mb-2 text-foreground">Name</label>
-                            <input 
+                            <Label htmlFor="name">Name</Label>
+                            <Input 
                                 type="text" 
                                 id="name" 
-                                className="w-full p-3 rounded-lg border bg-background focus:ring-2 focus:ring-primary outline-none transition-all"
                                 placeholder="Your Name"
                             />
                         </div>
                         
                         <div>
-                            <label htmlFor="email" className="block text-sm font-medium mb-2 text-foreground">Email</label>
-                            <input 
+                            <Label htmlFor="email">Email</Label>
+                            <Input 
                                 type="email" 
                                 id="email" 
-                                className="w-full p-3 rounded-lg border bg-background focus:ring-2 focus:ring-primary outline-none transition-all"
                                 placeholder="your@email.com"
                             />
                         </div>
 
                         <div>
-                            <label htmlFor="message" className="block text-sm font-medium mb-2 text-foreground">Message</label>
-                            <textarea 
+                            <Label htmlFor="message">Message</Label>
+                            <Textarea 
                                 id="message" 
                                 rows={5}
-                                className="w-full p-3 rounded-lg border bg-background focus:ring-2 focus:ring-primary outline-none transition-all resize-none"
                                 placeholder="How can we help you?"
                             />
                         </div>
 
-                        <button 
+                        <Button 
                             type="button" 
-                            className="w-full py-3 px-4 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-lg transition-colors"
+                            className="w-full"
                         >
                             Send Message
-                        </button>
+                        </Button>
                     </form>
-                </div>
+                </Card>
             </div>
         </div>
     )
