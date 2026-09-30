@@ -5,6 +5,10 @@ import { redirect } from "next/navigation"
 import { SettingsForm } from "@/components/admin/SettingsForm"
 import { db } from "@/lib/db"
 
+export const metadata = {
+    title: "Settings",
+}
+
 export default async function SettingsPage() {
     const session = await getServerSession(authOptions)
 

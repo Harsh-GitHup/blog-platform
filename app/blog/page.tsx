@@ -3,6 +3,10 @@ import PostCard from "@/components/PostCard";
 
 export const revalidate = 3600; 
 
+export const metadata = {
+    title: "Explore",
+}
+
 export default async function BlogPage() {
     // For now, we will reuse the getPublishedPosts action.
     // You can later add pagination or search filtering here!

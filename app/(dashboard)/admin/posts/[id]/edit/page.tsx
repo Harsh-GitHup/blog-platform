@@ -12,6 +12,10 @@ interface EditPostPageProps {
     params: Promise<{ id: string }>
 }
 
+// export const metadata = {
+//     title: "Edit Post",
+// }
+
 export default async function EditPostPage({ params }: EditPostPageProps) {
     const session = await getServerSession(authOptions)
     

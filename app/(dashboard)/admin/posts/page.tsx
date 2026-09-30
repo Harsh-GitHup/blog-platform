@@ -9,6 +9,10 @@ import { Plus, ArrowLeft, Eye, Pencil } from "lucide-react"
 import { formatDate } from "@/lib/utils"
 import { DeletePostButton } from "@/components/admin/DeletePostButton"
 
+export const metadata = {
+    title: "Manage Posts",
+}
+
 export default async function AdminPostsPage() {
     const session = await getServerSession(authOptions)
 

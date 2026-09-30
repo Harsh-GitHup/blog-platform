@@ -8,6 +8,10 @@ import { ArrowRight } from "lucide-react";
 
 export const revalidate = 3600; 
 
+export const metadata = {
+    title: "Home | Blogify",
+}
+
 export default async function Home() {
     const posts = await getPublishedPosts()
 

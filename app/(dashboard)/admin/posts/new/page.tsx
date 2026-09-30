@@ -7,6 +7,10 @@ import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
+// export const metadata = {
+//     title: "New Post",
+// }
+
 export default async function NewPostPage() {
     const session = await getServerSession(authOptions)
 

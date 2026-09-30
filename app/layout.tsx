@@ -13,7 +13,10 @@ const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit' });
 const inter = Inter({ subsets: ["latin"], variable: '--font-inter' })
 
 export const metadata: Metadata = {
-    title: "Modern Blog Platform",
+    title: {
+        template: "%s | Blogify",
+        default: "Blogify | Modern Blog Platform",
+    },
     description: "A high-performance blog built with Next.js and MongoDB",
 }
 
