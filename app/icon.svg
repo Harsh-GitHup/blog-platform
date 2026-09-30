@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="256" y2="256" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#18181b" />
+      <stop offset="1" stop-color="#09090b" />
+    </linearGradient>
+    <linearGradient id="text" x1="64" y1="64" x2="192" y2="192" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff" />
+      <stop offset="1" stop-color="#a1a1aa" />
+    </linearGradient>
+  </defs>
+  
+  <rect width="256" height="256" rx="56" fill="url(#bg)" />
+  
+  <!-- Sleek modern "B" shape -->
+  <path d="M72 192V64H124C143.882 64 160 80.1177 160 100C160 112.503 153.626 123.518 144.137 129.805C158.423 135.035 168.426 148.455 168.426 164C168.426 183.882 152.309 200 132.426 200H72V192ZM104 120H124C135.046 120 144 111.046 144 100C144 88.9543 135.046 80 124 80H104V120ZM104 184H132.426C143.472 184 152.426 175.046 152.426 164C152.426 152.954 143.472 144 132.426 144H104V184Z" fill="url(#text)" />
+</svg>
