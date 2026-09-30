@@ -138,24 +138,35 @@ export function PostForm({ userId, initialData }: { userId: string, initialData?
                     <div className="space-y-2">
                         <Label>Cover Image</Label>
                         <div className="flex flex-col gap-4">
-                            {imageUrl && (
-                                <div className="relative aspect-video rounded-xl overflow-hidden border">
+                            {imageUrl ? (
+                                <div className="relative aspect-video rounded-xl overflow-hidden border group">
                                     <Image src={imageUrl} alt="Cover" fill sizes="(max-width: 768px) 100vw, 800px" className="object-cover" />
+                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                                        <Button 
+                                            type="button" 
+                                            variant="destructive" 
+                                            onClick={() => form.setValue("image", "")}
+                                            className="shadow-lg"
+                                        >
+                                            Remove Image
+                                        </Button>
+                                    </div>
                                 </div>
+                            ) : (
+                                <UploadDropzone
+                                    endpoint="imageUploader"
+                                    className="ut-button:bg-primary ut-button:ut-readying:bg-primary/50"
+                                    onClientUploadComplete={(res) => {
+                                        if (res?.[0]) {
+                                            form.setValue("image", res[0].url)
+                                            toast.success("Cover image uploaded")
+                                        }
+                                    }}
+                                    onUploadError={(error: Error) => {
+                                        toast.error(`Upload failed: ${error.message}`)
+                                    }}
+                                />
                             )}
-                            <UploadDropzone
-                                endpoint="imageUploader"
-                                className="ut-button:bg-primary ut-button:ut-readying:bg-primary/50"
-                                onClientUploadComplete={(res) => {
-                                    if (res?.[0]) {
-                                        form.setValue("image", res[0].url)
-                                        toast.success("Cover image uploaded")
-                                    }
-                                }}
-                                onUploadError={(error: Error) => {
-                                    toast.error(`Upload failed: ${error.message}`)
-                                }}
-                            />
                         </div>
                     </div>
                 </div>
