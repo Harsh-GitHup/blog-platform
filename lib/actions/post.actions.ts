@@ -86,10 +86,20 @@ export async function getPublishedPosts() {
 
 export async function deletePost(id: string) {
     try {
+        const comments = await db.comment.findMany({ where: { postId: id }, select: { id: true } })
+        const commentIds = comments.map(c => c.id)
+
+        if (commentIds.length > 0) {
+            await db.commentLike.deleteMany({ where: { commentId: { in: commentIds } } })
+        }
+        await db.comment.deleteMany({ where: { postId: id } })
+        await db.like.deleteMany({ where: { postId: id } })
+        
         await db.post.delete({ where: { id } })
         revalidatePath("/admin")
         return { success: true }
-    } catch (error) {
-        return { success: false, error: "Delete failed" }
+    } catch (error: any) {
+        console.error("DELETE_POST_ERROR:", error)
+        return { success: false, error: error?.message || "Delete failed" }
     }
 }
