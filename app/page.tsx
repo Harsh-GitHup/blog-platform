@@ -1,12 +1,12 @@
 // app/page.tsx
 import { getPublishedPosts } from "@/lib/actions/post.actions"
 import PostCard from "@/components/PostCard";
-
+import ExploreAllCard from "@/components/ExploreAllCard";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
-export const revalidate = 3600; 
+export const revalidate = 3600;
 
 export const metadata = {
     title: "Home | Blogify",
@@ -49,7 +49,7 @@ export default async function Home() {
 
             {/* Articles Section */}
             <section className="container mx-auto px-4">
-                <h2 
+                <h2
                     className="text-3xl font-heading font-bold mb-10 flex items-center gap-4"
                 >
                     Latest Articles
@@ -57,14 +57,17 @@ export default async function Home() {
                 </h2>
 
                 {posts.length > 0 ? (
-                    <div 
+                    <div
                         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10"
                     >
-                        {posts.map((post) => (
+                        {posts.slice(0, 5).map((post) => (
                             <div key={post.id} className="h-full">
                                 <PostCard post={post as any} />
                             </div>
                         ))}
+
+                        {/* Explore All Card */}
+                        <ExploreAllCard />
                     </div>
                 ) : (
                     <div className="text-center py-24 bg-muted/30 rounded-2xl border border-border/50">

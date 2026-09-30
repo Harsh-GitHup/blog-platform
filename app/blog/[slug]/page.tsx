@@ -5,6 +5,8 @@ import { formatDate } from "@/lib/utils"
 import Image from "next/image"
 import LikeButton from "@/components/blog/LikeButton"
 import CommentSection from "@/components/blog/CommentSection"
+import ViewTracker from "@/components/blog/ViewTracker"
+import { Eye } from "lucide-react"
 
 interface PostPageProps {
     params: Promise<{ slug: string }>
@@ -55,6 +57,7 @@ export default async function PostPage({ params }: PostPageProps) {
 
     return (
         <article className="max-w-3xl mx-auto py-10">
+            <ViewTracker slug={post.slug} />
             <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6 border-b pb-8 border-border/50">
                 <div className="flex-1 md:pr-8">
                     {post.category && (
@@ -92,6 +95,10 @@ export default async function PostPage({ params }: PostPageProps) {
                     <div className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                         <span className="hidden md:inline-block w-8 h-[1px] bg-border"></span>
                         {formatDate(post.publishedAt || post.createdAt)}
+                        <span className="ml-3 flex items-center gap-1.5">
+                            <Eye className="w-4 h-4" />
+                            {post.views} views
+                        </span>
                     </div>
                 </div>
             </header>

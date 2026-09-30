@@ -103,3 +103,16 @@ export async function deletePost(id: string) {
         return { success: false, error: error?.message || "Delete failed" }
     }
 }
+
+export async function incrementViewCount(slug: string) {
+    try {
+        await db.post.update({
+            where: { slug },
+            data: { views: { increment: 1 } }
+        })
+        return { success: true }
+    } catch (error) {
+        console.error("Failed to increment views:", error)
+        return { success: false }
+    }
+}
