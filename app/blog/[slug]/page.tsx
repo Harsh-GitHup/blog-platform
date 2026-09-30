@@ -28,23 +28,10 @@ export default async function PostPage({ params }: PostPageProps) {
             category: true, 
             tags: true,
             comments: {
-                where: { 
-                    OR: [
-                        { parentId: null },
-                        { parentId: { isSet: false } }
-                    ]
-                },
-                orderBy: { createdAt: 'desc' },
+                orderBy: { createdAt: 'asc' },
                 include: {
                     user: { select: { name: true, image: true } },
                     likes: true,
-                    replies: {
-                        orderBy: { createdAt: 'asc' },
-                        include: {
-                            user: { select: { name: true, image: true } },
-                            likes: true
-                        }
-                    }
                 }
             },
             _count: {
@@ -54,6 +41,28 @@ export default async function PostPage({ params }: PostPageProps) {
     })
 
     if (!post) notFound()
+
+    // Build comment tree from flat list
+    const commentMap = new Map()
+    post.comments.forEach(c => {
+        commentMap.set(c.id, { ...c, replies: [] })
+    })
+
+    const rootComments: any[] = []
+    post.comments.forEach(c => {
+        if (c.parentId) {
+            const parent = commentMap.get(c.parentId)
+            if (parent) {
+                parent.replies.push(commentMap.get(c.id))
+            } else {
+                rootComments.push(commentMap.get(c.id))
+            }
+        } else {
+            rootComments.push(commentMap.get(c.id))
+        }
+    })
+
+    rootComments.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 
     return (
         <article className="max-w-3xl mx-auto py-10">
@@ -144,7 +153,7 @@ export default async function PostPage({ params }: PostPageProps) {
             
             <hr className="my-12" />
 
-            <CommentSection postId={post.id} initialComments={post.comments} />
+            <CommentSection postId={post.id} initialComments={rootComments} />
         </article>
     )
 }

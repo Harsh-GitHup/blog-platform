@@ -194,19 +194,26 @@ export default function CommentSection({ postId, initialComments }: CommentSecti
                 if (!('parentId' in comment) || !(comment as any).parentId) {
                     if (prev.some(c => c.id === comment.id)) return prev
                     return [comment, ...prev]
-                } else {
-                    // It's a reply. Find the parent and append it.
-                    // For single-level nesting, we only search top-level comments
-                    const parentId = (comment as any).parentId
-                    return prev.map(c => {
+                }
+                
+                // It's a reply. Find the parent recursively and append it.
+                const parentId = (comment as any).parentId
+                
+                const addReplyToTree = (commentsList: CommentData[]): CommentData[] => {
+                    return commentsList.map(c => {
                         if (c.id === parentId) {
                             const replies = c.replies || []
                             if (replies.some(r => r.id === comment.id)) return c
                             return { ...c, replies: [...replies, comment] }
                         }
+                        if (c.replies && c.replies.length > 0) {
+                            return { ...c, replies: addReplyToTree(c.replies) }
+                        }
                         return c
                     })
                 }
+                
+                return addReplyToTree(prev)
             })
         }
 
