@@ -70,9 +70,9 @@ export default function PostCard({ post }: PostCardProps) {
                 </CardContent>
                 <CardFooter className="mt-auto border-t border-border/50 pt-4 flex items-center justify-between bg-muted/10">
                     <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-muted overflow-hidden ring-2 ring-background">
+                        <div className="relative w-8 h-8 rounded-full bg-muted overflow-hidden ring-2 ring-background">
                             {post.author.image ? (
-                                <Image src={post.author.image} alt={post.author.name || "Author"} width={32} height={32} className="object-cover" />
+                                <Image src={post.author.image} alt={post.author.name || "Author"} fill sizes="32px" className="object-cover" />
                             ) : (
                                 <div className="w-full h-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
                                     {(post.author.name || "A")[0].toUpperCase()}

@@ -38,13 +38,15 @@ const MenuBar = ({ editor }: { editor: any }) => {
     )
 }
 
+const extensions = [
+    StarterKit,
+    Link.configure({ openOnClick: false }),
+    Image,
+]
+
 export default function Editor({ onChange, initialContent }: EditorProps) {
     const editor = useEditor({
-        extensions: [
-            StarterKit,
-            Link.configure({ openOnClick: false }),
-            Image,
-        ],
+        extensions,
         content: initialContent || '',
         immediatelyRender: false,
         onUpdate: ({ editor }) => {

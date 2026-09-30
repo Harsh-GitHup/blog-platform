@@ -73,14 +73,20 @@ export default async function PostPage({ params }: PostPageProps) {
                             <p className="text-base font-bold text-foreground">{post.author?.name || "Anonymous"}</p>
                             <p className="text-xs text-muted-foreground">Author & Contributor</p>
                         </div>
-                        <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-border shadow-sm">
-                            <Image
-                                src={post.author?.image || "/avatar-placeholder.png"}
-                                alt={post.author?.name || "Author"}
-                                fill
-                                sizes="48px"
-                                className="object-cover"
-                            />
+                        <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-border shadow-sm bg-muted flex items-center justify-center">
+                            {post.author?.image ? (
+                                <Image
+                                    src={post.author.image}
+                                    alt={post.author?.name || "Author"}
+                                    fill
+                                    sizes="48px"
+                                    className="object-cover"
+                                />
+                            ) : (
+                                <span className="text-sm font-bold text-muted-foreground">
+                                    {(post.author?.name || "A")[0].toUpperCase()}
+                                </span>
+                            )}
                         </div>
                     </div>
                     <div className="text-sm font-medium text-muted-foreground flex items-center gap-2">
@@ -90,15 +96,21 @@ export default async function PostPage({ params }: PostPageProps) {
                 </div>
             </header>
 
-            <div className="relative aspect-video w-full rounded-2xl overflow-hidden mb-10 shadow-xl">
-                <Image
-                    src={post.image || "/blog-placeholder.jpg"}
-                    alt={post.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 800px"
-                    className="object-cover"
-                    priority
-                />
+            <div className="relative aspect-video w-full rounded-2xl overflow-hidden mb-10 shadow-xl bg-muted/30">
+                {post.image ? (
+                    <Image
+                        src={post.image}
+                        alt={post.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 800px"
+                        className="object-cover"
+                        priority
+                    />
+                ) : (
+                    <div className="w-full h-full gradient-placeholder flex items-center justify-center text-muted-foreground">
+                        <span className="font-medium text-lg opacity-50">No Cover Image</span>
+                    </div>
+                )}
             </div>
 
             <div
