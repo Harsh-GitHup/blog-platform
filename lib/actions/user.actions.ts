@@ -98,3 +98,75 @@ export async function updatePassword(userId: string, currentPassword?: string, n
         return { success: false, error: "Failed to update password" }
     }
 }
+
+export async function requestPasswordReset(email: string) {
+    try {
+        const user = await db.user.findUnique({ where: { email } })
+        if (!user) {
+            // We still return success to prevent email enumeration
+            return { success: true }
+        }
+
+        const token = crypto.randomUUID()
+        const expires = new Date(Date.now() + 1000 * 60 * 60) // 1 hour
+
+        // First remove any existing tokens for this email
+        await db.passwordResetToken.deleteMany({
+            where: { email }
+        })
+
+        await db.passwordResetToken.create({
+            data: {
+                email,
+                token,
+                expires
+            }
+        })
+
+        // In a real app, you would send an email here using Resend, Nodemailer, etc.
+        // For development, we'll log it to the server console.
+        console.log(`\n=========================================`)
+        console.log(`PASSWORD RESET LINK FOR ${email}:`)
+        console.log(`http://localhost:3000/reset-password?token=${token}`)
+        console.log(`=========================================\n`)
+
+        return { success: true }
+    } catch (error) {
+        console.error("PASSWORD_RESET_REQUEST_ERROR", error)
+        return { success: false, error: "Failed to process request" }
+    }
+}
+
+export async function resetPassword(token: string, password: string) {
+    try {
+        const resetToken = await db.passwordResetToken.findUnique({
+            where: { token }
+        })
+
+        if (!resetToken) {
+            return { success: false, error: "Invalid token" }
+        }
+
+        if (new Date() > resetToken.expires) {
+            return { success: false, error: "Token has expired" }
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 12)
+
+        // Update user's password
+        await db.user.update({
+            where: { email: resetToken.email },
+            data: { password: hashedPassword }
+        })
+
+        // Delete the token
+        await db.passwordResetToken.delete({
+            where: { id: resetToken.id }
+        })
+
+        return { success: true }
+    } catch (error) {
+        console.error("RESET_PASSWORD_ERROR", error)
+        return { success: false, error: "Failed to reset password" }
+    }
+}
