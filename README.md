@@ -106,8 +106,8 @@ The MongoDB database is managed by **Prisma** using native `ObjectId` relations.
 
 ### 2. Installation
 ```bash
-git clone https://github.com/your-username/blog-platform.git
-cd blog-platform
+git clone https://github.com/Harsh-GitHup/Blog-Platform.git
+cd Blog-Platform
 npm install
 ```
 
