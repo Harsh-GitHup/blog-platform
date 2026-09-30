@@ -1,6 +1,7 @@
 // components/Footer.tsx
 import Link from "next/link"
 import { Github, Twitter, Linkedin } from "lucide-react"
+import { FooterDashboardLink } from "./FooterDashboardLink"
 
 export default function Footer() {
     return (
@@ -15,15 +16,15 @@ export default function Footer() {
                             A high-performance blog platform built with Next.js 16, Tailwind CSS, and MongoDB. Empowering creators to share their stories with the world.
                         </p>
                         <div className="flex space-x-4 pt-2">
-                            <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                            <Link href="https://x.com/HarshKesha91325/" className="text-muted-foreground hover:text-primary transition-colors">
                                 <Twitter className="h-5 w-5" />
                                 <span className="sr-only">Twitter</span>
                             </Link>
-                            <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                            <Link href="https://github.com/Harsh-GitHup/" className="text-muted-foreground hover:text-primary transition-colors">
                                 <Github className="h-5 w-5" />
                                 <span className="sr-only">GitHub</span>
                             </Link>
-                            <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                            <Link href="https://www.linkedin.com/in/harshkesharwani/" className="text-muted-foreground hover:text-primary transition-colors">
                                 <Linkedin className="h-5 w-5" />
                                 <span className="sr-only">LinkedIn</span>
                             </Link>
@@ -36,7 +37,7 @@ export default function Footer() {
                             <li><Link href="/blog" className="hover:text-primary transition-colors">Explore Articles</Link></li>
                             <li><Link href="/about" className="hover:text-primary transition-colors">About Us</Link></li>
                             <li><Link href="/contact" className="hover:text-primary transition-colors">Contact</Link></li>
-                            <li><Link href="/admin" className="hover:text-primary transition-colors">Dashboard</Link></li>
+                            <FooterDashboardLink />
                         </ul>
                     </div>
                     
@@ -50,9 +51,9 @@ export default function Footer() {
                 </div>
                 
                 <div className="border-t mt-12 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-muted-foreground">
-                    <p>© {new Date().getFullYear()} Blogify Platform. All rights reserved.</p>
-                    <p className="mt-2 md:mt-0 flex items-center gap-1">
-                        Built with <span className="text-red-500">♥</span> using Next.js
+                    <p>© {new Date().getFullYear()} Blogify. All rights reserved.</p>
+                    <p className="mt-2 md:mt-0 flex items-center gap-1.5">
+                        Built with <span className="text-red-500">♥</span> by <Link href="https://github.com/Harsh-GitHup" className="font-medium hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">Harsh Kesharwani</Link> using Next.js
                     </p>
                 </div>
             </div>
