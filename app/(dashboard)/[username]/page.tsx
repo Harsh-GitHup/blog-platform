@@ -21,26 +21,33 @@ export default async function AdminDashboard({ params }: { params: Promise<{ use
         redirect("/") // Send non-admins back to home
     }
 
-    // Fetch aggregate statistics
+    // Fetch user-specific statistics
     let totalPosts = 0
     let publishedPosts = 0
-    let totalUsers = 0
+    let totalLikes = 0
     let totalComments = 0
     let totalViews = 0
     let recentPosts: any[] = []
 
     try {
-        const [postsCount, usersCount, commentsCount, viewsAgg, latest] = await Promise.all([
+        const [postsCount, likesCount, commentsCount, viewsAgg, latest] = await Promise.all([
             db.post.groupBy({
                 by: ['status'],
+                where: { authorId: session.user.id },
                 _count: true,
             }),
-            db.user.count(),
-            db.comment.count(),
+            db.like.count({
+                where: { post: { authorId: session.user.id } }
+            }),
+            db.comment.count({
+                where: { post: { authorId: session.user.id } }
+            }),
             db.post.aggregate({
+                where: { authorId: session.user.id },
                 _sum: { views: true }
             }),
             db.post.findMany({
+                where: { authorId: session.user.id },
                 take: 5,
                 orderBy: { createdAt: 'desc' },
                 include: { author: true }
@@ -49,7 +56,7 @@ export default async function AdminDashboard({ params }: { params: Promise<{ use
 
         totalPosts = postsCount.reduce((acc, curr) => acc + curr._count, 0)
         publishedPosts = postsCount.find(p => p.status === 'PUBLISHED')?._count || 0
-        totalUsers = usersCount
+        totalLikes = likesCount
         totalComments = commentsCount
         totalViews = viewsAgg._sum.views || 0
         recentPosts = latest
@@ -59,7 +66,7 @@ export default async function AdminDashboard({ params }: { params: Promise<{ use
 
     const statCards = [
         { title: "Total Posts", value: totalPosts, subtext: `${publishedPosts} published`, icon: FileText, color: "text-blue-500", bg: "bg-blue-50 dark:bg-blue-900/20" },
-        { title: "Total Users", value: totalUsers, subtext: "Registered accounts", icon: Users, color: "text-emerald-500", bg: "bg-emerald-50 dark:bg-emerald-900/20" },
+        { title: "Total Likes", value: totalLikes, subtext: "On your posts", icon: Users, color: "text-emerald-500", bg: "bg-emerald-50 dark:bg-emerald-900/20" },
         { title: "Total Views", value: totalViews, subtext: "Across all posts", icon: Eye, color: "text-violet-500", bg: "bg-violet-50 dark:bg-violet-900/20" },
         { title: "Comments", value: totalComments, subtext: "User interactions", icon: MessageSquare, color: "text-amber-500", bg: "bg-amber-50 dark:bg-amber-900/20" },
     ]

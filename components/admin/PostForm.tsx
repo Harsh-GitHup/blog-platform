@@ -172,7 +172,17 @@ export function PostForm({ userId, username, initialData }: { userId: string, us
                 </div>
             </div>
 
-            <div className="flex justify-end pt-6 border-t border-border/50">
+            <div className="flex items-center justify-end gap-3 pt-6 border-t border-border/50">
+                <Button 
+                    type="button" 
+                    variant="outline" 
+                    size="lg" 
+                    disabled={isLoading} 
+                    onClick={() => router.push(`/${username}/posts`)} 
+                    className="w-full sm:w-auto"
+                >
+                    Cancel
+                </Button>
                 <Button type="submit" size="lg" disabled={isLoading} className="w-full sm:w-auto">
                     {isLoading ? (initialData ? "Saving Changes..." : "Publishing...") : (initialData ? "Save Changes" : "Publish Post")}
                 </Button>

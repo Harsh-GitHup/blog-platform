@@ -33,6 +33,10 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
         notFound()
     }
 
+    if (post.authorId !== session.user.id) {
+        redirect("/")
+    }
+
     return (
         <div className="max-w-5xl mx-auto space-y-8">
             <div className="flex items-center gap-4 border-b border-border/50 pb-6">

@@ -21,8 +21,9 @@ export default async function AdminPostsPage({ params }: { params: Promise<{ use
         redirect("/")
     }
 
-    // Fetch all posts ordered by creation date
+    // Fetch all posts ordered by creation date, filtered by current user
     const posts = await db.post.findMany({
+        where: { authorId: session.user.id },
         orderBy: { createdAt: 'desc' },
         include: { author: true }
     })
