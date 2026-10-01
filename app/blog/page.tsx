@@ -1,8 +1,10 @@
 import { getPublishedPosts, getCategories } from "@/lib/actions/post.actions"
 import PostCard from "@/components/PostCard";
 import BlogSearch from "@/components/BlogSearch";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export const revalidate = 3600; 
+export const revalidate = 3600;
 
 export const metadata = {
     title: "Explore",
@@ -30,7 +32,16 @@ export default async function BlogPage({
                 Explore All Articles
             </h1>
 
-            <Suspense fallback={null}>
+            <Suspense fallback={
+                <div className="w-full max-w-2xl mx-auto mb-12 space-y-4">
+                    <Skeleton className="h-12 w-full rounded-xl" />
+                    <div className="flex flex-wrap gap-2 justify-center">
+                        <Skeleton className="h-8 w-16 rounded-full" />
+                        <Skeleton className="h-8 w-20 rounded-full" />
+                        <Skeleton className="h-8 w-24 rounded-full" />
+                    </div>
+                </div>
+            }>
                 <BlogSearch categories={categories} />
             </Suspense>
 
