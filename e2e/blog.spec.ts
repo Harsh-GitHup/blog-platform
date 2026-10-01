@@ -21,4 +21,11 @@ test.describe('Blog Page Flows', () => {
     
     await expect(page).toHaveURL(/.*\/blog/);
   });
+
+  test('should display the blog page and articles section grid', async ({ page }) => {
+    await page.goto('/blog');
+    await expect(page.locator('h1')).toContainText('Explore All Articles');
+    // Ensure the posts grid is loaded
+    await expect(page.locator('.grid').first()).toBeVisible();
+  });
 });

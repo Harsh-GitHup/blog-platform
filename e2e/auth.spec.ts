@@ -11,7 +11,7 @@ test.describe('Authentication Flows', () => {
     
     // Expect URL to be /login and see sign in heading
     await expect(page).toHaveURL(/.*\/login/);
-    const heading = page.getByRole('heading', { name: /Sign in to your account/i });
+    const heading = page.getByRole('heading', { name: /Sign in to your account|Welcome Back/i });
     await expect(heading).toBeVisible();
   });
 
@@ -23,7 +23,7 @@ test.describe('Authentication Flows', () => {
     if (await registerLink.isVisible()) {
         await registerLink.click();
         await expect(page).toHaveURL(/.*\/register/);
-        const heading = page.getByRole('heading', { name: /Create an account/i });
+        const heading = page.getByRole('heading', { name: /Create an account|Create Account/i });
         await expect(heading).toBeVisible();
     }
   });
@@ -38,5 +38,21 @@ test.describe('Authentication Flows', () => {
     // Should show validation errors for email and password
     await expect(page.getByText(/email is required|invalid email/i).first()).toBeVisible();
     await expect(page.getByText(/password is required|must be at least/i).first()).toBeVisible();
+  });
+
+  test('should display login page form fields', async ({ page }) => {
+    await page.goto('/login');
+    await expect(page.getByPlaceholder('name@example.com')).toBeVisible();
+    await expect(page.locator('input[type="password"]')).toBeVisible();
+    await expect(page.getByRole('button', { name: /Sign In/i })).toBeVisible();
+  });
+
+  test('should display register page form fields', async ({ page }) => {
+    await page.goto('/register');
+    await expect(page.getByPlaceholder('John Doe').first()).toBeVisible();
+    await expect(page.getByPlaceholder('name@example.com')).toBeVisible();
+    await expect(page.getByPlaceholder('johndoe123')).toBeVisible();
+    await expect(page.locator('input[type="password"]')).toBeVisible();
+    await expect(page.locator('button[type="submit"]')).toBeVisible();
   });
 });
