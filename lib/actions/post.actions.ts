@@ -76,17 +76,31 @@ export async function updatePost(id: string, data: Partial<CreatePostInput>) {
     }
 }
 
-export async function getPublishedPosts() {
+export async function getPublishedPosts(query?: string, categoryId?: string) {
     try {
+        const whereClause: any = { status: "PUBLISHED" }
+        
+        if (query) {
+            whereClause.OR = [
+                { title: { contains: query, mode: "insensitive" } },
+                { excerpt: { contains: query, mode: "insensitive" } },
+                { content: { contains: query, mode: "insensitive" } },
+            ]
+        }
+        
+        if (categoryId && categoryId !== 'all') {
+            whereClause.categoryId = categoryId
+        }
+
         const posts = await db.post.findMany({
-            where: { status: "PUBLISHED" },
+            where: whereClause,
             orderBy: { publishedAt: "desc" },
             include: {
                 author: { select: { name: true, image: true, username: true } },
                 category: true,
                 tags: true,
             },
-            take: 10,
+            take: 20, // increased take slightly for better search results
         })
 
         return posts.map(post => ({
@@ -141,5 +155,16 @@ export async function incrementViewCount(slug: string) {
     } catch (error) {
         console.error("Failed to increment views:", error)
         return { success: false }
+    }
+}
+
+export async function getCategories() {
+    try {
+        return await db.category.findMany({
+            orderBy: { name: 'asc' }
+        })
+    } catch (error) {
+        console.error("Failed to fetch categories:", error)
+        return []
     }
 }
