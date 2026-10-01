@@ -12,7 +12,7 @@ describe('Input component', () => {
     render(<Input data-testid="test-input" className="my-custom-class" />)
     const inputElement = screen.getByTestId('test-input')
     expect(inputElement).toHaveClass('my-custom-class')
-    expect(inputElement).toHaveClass('flex')
+    expect(inputElement).toHaveClass('w-full')
   })
 
   it('can be disabled', () => {

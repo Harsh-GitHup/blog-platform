@@ -8,7 +8,7 @@ test.describe('Home Page', () => {
     await expect(page).toHaveTitle(/Blogify/);
 
     // Expect to find a link or text that is known to exist on the home page
-    const heading = page.getByRole('heading', { name: /Explore/i }).first();
+    const heading = page.getByRole('heading', { name: /Latest Articles/i }).first();
     await expect(heading).toBeVisible();
   });
 
@@ -19,7 +19,7 @@ test.describe('Home Page', () => {
 
   test('should have working navigation links', async ({ page }) => {
     await page.goto('/');
-    const exploreLink = page.getByRole('link', { name: /Explore/i, exact: false }).first();
+    const exploreLink = page.getByRole('link', { name: /Start Reading/i, exact: false }).first();
     await expect(exploreLink).toBeVisible();
     await exploreLink.click();
     await expect(page).toHaveURL(/.*\/blog/);

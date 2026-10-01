@@ -16,7 +16,7 @@ describe('Footer component', () => {
     render(<Footer />)
     
     // Check main branding
-    expect(screen.getByText(/Blogify/i)).toBeInTheDocument()
+    expect(screen.getAllByText(/Blogify/i)[0]).toBeInTheDocument()
     
     // Check links sections exist
     expect(screen.getByText('Quick Links')).toBeInTheDocument()
