@@ -172,7 +172,7 @@ export function PostForm({ userId, username, initialData }: { userId: string, us
                 </div>
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-6 border-t border-border/50">
+            <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-3 pt-6 pb-10 border-t border-border/50">
                 <Button 
                     type="button" 
                     variant="outline" 

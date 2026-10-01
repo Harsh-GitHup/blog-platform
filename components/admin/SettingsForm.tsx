@@ -7,7 +7,11 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { updateProfile } from "@/lib/actions/user.actions"
 import toast from "react-hot-toast"
-import { UploadDropzone } from "@/lib/uploadthing"
+import dynamic from "next/dynamic"
+const UploadDropzone = dynamic(
+    () => import("@/lib/uploadthing").then((mod) => mod.UploadDropzone),
+    { ssr: false }
+)
 import Image from "next/image"
 import { Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
