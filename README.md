@@ -180,7 +180,7 @@ Blogify is highly optimized for deployment to [Vercel](https://vercel.com).
 
 ## 👨‍💻 Author
 
-Built with ♥ by **[Harsh Kesharwani](https://github.com/Harsh-GitHup)**
+Built with ♥ by **[Harsh Kesharwani](https://harshportfolio-beta.vercel.app/)**
 
 - **GitHub:** [@Harsh-GitHup](https://github.com/Harsh-GitHup)
 - **LinkedIn:** [Harsh Kesharwani](https://www.linkedin.com/in/harshkesharwani/)

@@ -53,7 +53,7 @@ export default function Footer() {
                 <div className="border-t mt-12 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-muted-foreground">
                     <p>© {new Date().getFullYear()} Blogify. All rights reserved.</p>
                     <p className="mt-2 md:mt-0 flex items-center gap-1.5">
-                        Built with <span className="text-red-500">♥</span> by <Link href="https://github.com/Harsh-GitHup" className="font-medium hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">Harsh Kesharwani</Link> using Next.js
+                        Built with <span className="text-red-500">♥</span> by <Link href="https://harshportfolio-beta.vercel.app/" className="font-medium hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">Harsh Kesharwani</Link> using Next.js
                     </p>
                 </div>
             </div>
