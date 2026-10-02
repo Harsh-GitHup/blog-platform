@@ -10,7 +10,7 @@ export default function BlogSearch({ categories }: { categories: any[] }) {
     const searchParams = useSearchParams()
     
     const [query, setQuery] = useState(searchParams.get("q") || "")
-    const [categoryId, setCategoryId] = useState(searchParams.get("category") || "all")
+    const [categoryName, setCategoryName] = useState(searchParams.get("category") || "all")
     const [isPending, startTransition] = useTransition()
 
     const createQueryString = useCallback(
@@ -37,7 +37,7 @@ export default function BlogSearch({ categories }: { categories: any[] }) {
     }, [query, router, createQueryString])
 
     const handleCategoryChange = (val: string) => {
-        setCategoryId(val)
+        setCategoryName(val)
         startTransition(() => {
             router.push(`/blog?${createQueryString("category", val !== 'all' ? val : '')}`)
         })
@@ -61,7 +61,7 @@ export default function BlogSearch({ categories }: { categories: any[] }) {
                     <button
                         onClick={() => handleCategoryChange('all')}
                         className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                            categoryId === 'all' 
+                            categoryName === 'all' 
                                 ? 'bg-primary text-primary-foreground' 
                                 : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
                         }`}
@@ -71,9 +71,9 @@ export default function BlogSearch({ categories }: { categories: any[] }) {
                     {categories.map((cat) => (
                         <button
                             key={cat.id}
-                            onClick={() => handleCategoryChange(cat.id)}
+                            onClick={() => handleCategoryChange(cat.name)}
                             className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                                categoryId === cat.id 
+                                categoryName === cat.name 
                                     ? 'bg-primary text-primary-foreground' 
                                     : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
                             }`}

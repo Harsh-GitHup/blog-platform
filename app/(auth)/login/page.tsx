@@ -52,7 +52,7 @@ export default function LoginPage() {
             redirect: false,
         })
 
-        if (res?.error) {
+        if (!res || res.error || !res.ok) {
             toast.error("Invalid email or password")
             setIsLoading(false)
         } else {

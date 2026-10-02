@@ -84,7 +84,7 @@ export async function updatePost(id: string, data: Partial<CreatePostInput>) {
     }
 }
 
-export async function getPublishedPosts(query?: string, categoryId?: string) {
+export async function getPublishedPosts(query?: string, categoryName?: string) {
     try {
         const whereClause: any = { status: "PUBLISHED" }
         
@@ -96,8 +96,8 @@ export async function getPublishedPosts(query?: string, categoryId?: string) {
             ]
         }
         
-        if (categoryId && categoryId !== 'all') {
-            whereClause.categoryId = categoryId
+        if (categoryName && categoryName !== 'all') {
+            whereClause.category = { name: categoryName }
         }
 
         const posts = await db.post.findMany({

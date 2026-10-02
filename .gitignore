@@ -44,8 +44,6 @@ next-env.d.ts
 .vscode
 .idea
 
-# documentations
+# local documentations & test scripts
 /docs/
-
-playwright-report/
-test-results/
+/docs/scratch/

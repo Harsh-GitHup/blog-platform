@@ -17,10 +17,10 @@ export default async function BlogPage({
 }) {
     const resolvedSearchParams = await searchParams;
     const query = typeof resolvedSearchParams.q === "string" ? resolvedSearchParams.q : undefined;
-    const categoryId = typeof resolvedSearchParams.category === "string" ? resolvedSearchParams.category : undefined;
+    const categoryName = typeof resolvedSearchParams.category === "string" ? resolvedSearchParams.category : undefined;
 
     const [posts, categories] = await Promise.all([
-        getPublishedPosts(query, categoryId),
+        getPublishedPosts(query, categoryName),
         getCategories()
     ]);
 

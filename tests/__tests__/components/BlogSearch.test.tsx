@@ -60,13 +60,13 @@ describe('BlogSearch Component', () => {
     const techButton = screen.getByText('Technology');
     fireEvent.click(techButton);
 
-    expect(pushMock).toHaveBeenCalledWith('/blog?category=cat1');
+    expect(pushMock).toHaveBeenCalledWith('/blog?category=Technology');
   });
 
   it('handles "All" category correctly by clearing category param', () => {
     (useSearchParams as jest.Mock).mockReturnValue({
-      get: jest.fn((key) => key === 'category' ? 'cat1' : null),
-      toString: jest.fn(() => 'category=cat1'),
+      get: jest.fn((key) => key === 'category' ? 'Technology' : null),
+      toString: jest.fn(() => 'category=Technology'),
     });
 
     render(<BlogSearch categories={categories} />);
