@@ -4,6 +4,8 @@ A high-performance, production-ready blogging platform engineered with the **Nex
 
 Blogify is designed to be fully serverless-ready, offering dynamic multi-author dashboards, real-time interactivity, and enterprise-grade media management.
 
+![Blogify Showcase Preview](./public/images/blogify_full_showcase_1790947342347.webp)
+
 ---
 
 ## 🚀 Key Features
