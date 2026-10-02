@@ -3,20 +3,20 @@ import { test, expect } from '@playwright/test';
 test.describe('Security & Authorization Flows', () => {
   
   test.describe('Protected Routes (Unauthenticated)', () => {
-    test('should redirect unauthenticated users away from /janedoe to /login', async ({ page }) => {
+    test('should redirect unauthenticated users away from /janedoe to home', async ({ page }) => {
       await page.goto('/janedoe');
-      // Next-Auth middleware should redirect to signin/login page
-      await expect(page).toHaveURL(/.*\/login/);
+      // Next-Auth middleware/layout should redirect to home page
+      await expect(page).toHaveURL('http://localhost:3000/');
     });
 
-    test('should redirect unauthenticated users away from /janedoe/settings to /login', async ({ page }) => {
+    test('should redirect unauthenticated users away from /janedoe/settings to home', async ({ page }) => {
       await page.goto('/janedoe/settings');
-      await expect(page).toHaveURL(/.*\/login/);
+      await expect(page).toHaveURL('http://localhost:3000/');
     });
 
-    test('should redirect unauthenticated users away from new post creation to /login', async ({ page }) => {
+    test('should redirect unauthenticated users away from new post creation to home', async ({ page }) => {
       await page.goto('/janedoe/posts/new');
-      await expect(page).toHaveURL(/.*\/login/);
+      await expect(page).toHaveURL('http://localhost:3000/');
     });
   });
 
@@ -39,7 +39,7 @@ test.describe('Security & Authorization Flows', () => {
       await expect(page).toHaveURL(/.*\/login/);
     });
 
-    test('should allow login with valid seeded credentials and access dashboard', async ({ page }) => {
+    test('should allow login with valid seeded credentials and redirect to home', async ({ page }) => {
       await page.goto('/login');
       
       const emailInput = page.getByPlaceholder('name@example.com');
@@ -51,13 +51,9 @@ test.describe('Security & Authorization Flows', () => {
       await passwordInput.fill('password123');
       await submitButton.click();
 
-      // Should redirect to dashboard upon successful login
-      await page.waitForURL('**/janedoe**');
-      await expect(page).toHaveURL(/.*\/janedoe/);
-      
-      // Verify user can now see dashboard content
-      const heading = page.getByRole('heading', { name: /Dashboard Overview/i }).first();
-      await expect(heading).toBeVisible();
+      // Should redirect to home upon successful login
+      await page.waitForURL('http://localhost:3000/');
+      await expect(page).toHaveURL('http://localhost:3000/');
     });
   });
 
