@@ -3,7 +3,7 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { formatDate } from "@/lib/utils"
+import { formatDate, formatShortDate } from "@/lib/utils"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
@@ -52,19 +52,20 @@ export default function PostCard({ post, priority = false }: PostCardProps) {
                     </div>
 
                     <CardHeader className="p-5 pb-3">
-                        <div className="flex items-center text-[13px] text-muted-foreground gap-2 mb-3">
+                        <div className="flex items-center text-[12px] sm:text-[13px] text-muted-foreground gap-1.5 sm:gap-2 mb-3 whitespace-nowrap">
                             <time dateTime={post.publishedAt || post.createdAt} className="font-medium">
-                                {formatDate(new Date(post.publishedAt || post.createdAt))}
+                                <span className="max-[411px]:hidden lg:hidden xl:inline">{formatDate(new Date(post.publishedAt || post.createdAt))}</span>
+                                <span className="hidden max-[411px]:inline lg:inline xl:hidden">{formatShortDate(new Date(post.publishedAt || post.createdAt))}</span>
                             </time>
-                            <span className="w-1 h-1 rounded-full bg-border"></span>
-                            <div className="flex items-center gap-1.5 font-medium">
+                            <span className="w-1 h-1 rounded-full bg-border shrink-0"></span>
+                            <div className="flex items-center gap-1 sm:gap-1.5 font-medium shrink-0">
                                 <Clock className="w-3.5 h-3.5" />
-                                <span>{post.readingTime || 5} min</span>
+                                <span>{post.readingTime || 5} <span className="max-[411px]:hidden">min</span></span>
                             </div>
-                            <span className="w-1 h-1 rounded-full bg-border"></span>
-                            <div className="flex items-center gap-1.5 font-medium">
+                            <span className="w-1 h-1 rounded-full bg-border shrink-0"></span>
+                            <div className="flex items-center gap-1 sm:gap-1.5 font-medium shrink-0">
                                 <Eye className="w-3.5 h-3.5" />
-                                <span>{post.views || 0} views</span>
+                                <span>{post.views || 0} <span className="max-[411px]:hidden">views</span></span>
                             </div>
                         </div>
                         <h3 className="text-xl font-bold font-heading line-clamp-2 leading-tight group-hover:text-primary transition-colors">

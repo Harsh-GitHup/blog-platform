@@ -14,6 +14,14 @@ export function formatDate(date: Date | string) {
   })
 }
 
+export function formatShortDate(date: Date | string) {
+  return new Date(date).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  })
+}
+
 export function calculateReadingTime(content: string) {
   const wordsPerMinute = 200
   const words = content.trim().split(/\s+/).length
