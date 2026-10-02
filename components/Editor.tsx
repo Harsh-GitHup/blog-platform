@@ -2,6 +2,7 @@
 "use client"
 
 import { useEditor, EditorContent } from '@tiptap/react'
+import { useMemo } from 'react'
 import StarterKit from '@tiptap/starter-kit'
 import Link from '@tiptap/extension-link'
 import Image from '@tiptap/extension-image'
@@ -38,13 +39,13 @@ const MenuBar = ({ editor }: { editor: any }) => {
     )
 }
 
-const extensions = [
-    StarterKit,
-    Link.configure({ openOnClick: false }),
-    Image,
-]
-
 export default function Editor({ onChange, initialContent }: EditorProps) {
+    const extensions = useMemo(() => [
+        StarterKit,
+        Link.configure({ openOnClick: false }),
+        Image,
+    ], [])
+
     const editor = useEditor({
         extensions,
         content: initialContent || '',

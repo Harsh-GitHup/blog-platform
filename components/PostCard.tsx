@@ -21,9 +21,10 @@ type PostWithRelations = Omit<Prisma.PostGetPayload<{
 
 interface PostCardProps {
     post: PostWithRelations
+    priority?: boolean
 }
 
-export default function PostCard({ post }: PostCardProps) {
+export default function PostCard({ post, priority = false }: PostCardProps) {
     return (
         <motion.div whileHover={{ y: -6 }} transition={{ type: "spring", stiffness: 300, damping: 20 }} className="h-full">
             <Link href={`/blog/${post.slug}`} className="block h-full outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl">
@@ -36,6 +37,7 @@ export default function PostCard({ post }: PostCardProps) {
                                 fill
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                 className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                priority={priority}
                             />
                         ) : (
                             <div className="w-full h-full gradient-placeholder transition-transform duration-700 group-hover:scale-105" />

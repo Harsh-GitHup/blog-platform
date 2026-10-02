@@ -60,9 +60,9 @@ export default async function Home() {
                     <div
                         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10"
                     >
-                        {posts.slice(0, 5).map((post) => (
+                        {posts.slice(0, 5).map((post, index) => (
                             <div key={post.id} className="h-full">
-                                <PostCard post={post as any} />
+                                <PostCard post={post as any} priority={index === 0} />
                             </div>
                         ))}
 
