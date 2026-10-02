@@ -5,7 +5,7 @@ import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Plus, ArrowLeft, Eye, Pencil } from "lucide-react"
+import { Plus, ArrowLeft, Eye, Pencil, ChevronsUpDown } from "lucide-react"
 import { formatDate } from "@/lib/utils"
 import { DeletePostButton } from "@/components/admin/DeletePostButton"
 
@@ -13,18 +13,49 @@ export const metadata = {
     title: "Manage Posts",
 }
 
-export default async function AdminPostsPage({ params }: { params: Promise<{ username: string }> }) {
+const SortHeader = ({ field, label, currentSort, currentDir, username }: { field: string, label: string, currentSort: string, currentDir: string, username: string }) => {
+    const isActive = currentSort === field
+    const nextDir = isActive && currentDir === 'asc' ? 'desc' : 'asc'
+    return (
+        <th className="px-6 py-4 font-medium group cursor-pointer transition-colors hover:text-foreground">
+            <Link href={`/${username}/posts?sort=${field}&dir=${nextDir}`} className="flex items-center gap-1.5 w-fit select-none">
+                {label}
+                <ChevronsUpDown className={`w-3.5 h-3.5 transition-opacity ${isActive ? 'opacity-100 text-foreground' : 'opacity-0 group-hover:opacity-100 text-muted-foreground'}`} />
+            </Link>
+        </th>
+    )
+}
+
+export default async function AdminPostsPage({ 
+    params,
+    searchParams 
+}: { 
+    params: Promise<{ username: string }>,
+    searchParams: Promise<{ sort?: string, dir?: string }>
+}) {
     const session = await getServerSession(authOptions)
     const { username } = await params
+    const resolvedSearchParams = await searchParams
+    const sort = resolvedSearchParams.sort || 'createdAt'
+    const dir = resolvedSearchParams.dir || 'desc'
 
     if (!session) {
         redirect("/")
     }
 
+    let orderBy: any = { createdAt: 'desc' }
+    if (sort === 'title') {
+        orderBy = { title: dir === 'asc' ? 'asc' : 'desc' }
+    } else if (sort === 'status') {
+        orderBy = { status: dir === 'asc' ? 'asc' : 'desc' }
+    } else if (sort === 'createdAt') {
+        orderBy = { createdAt: dir === 'asc' ? 'asc' : 'desc' }
+    }
+
     // Fetch all posts ordered by creation date, filtered by current user
     const posts = await db.post.findMany({
         where: { authorId: session.user.id },
-        orderBy: { createdAt: 'desc' },
+        orderBy,
         include: { author: true }
     })
 
@@ -58,16 +89,16 @@ export default async function AdminPostsPage({ params }: { params: Promise<{ use
                         <table className="w-full text-sm text-left">
                             <thead className="text-xs text-muted-foreground bg-muted/50 border-b border-border/50">
                                 <tr>
-                                    <th className="px-6 py-4 font-medium">Title</th>
+                                    <SortHeader field="title" label="Title" currentSort={sort} currentDir={dir} username={username} />
                                     <th className="px-6 py-4 font-medium">Author</th>
-                                    <th className="px-6 py-4 font-medium">Status</th>
-                                    <th className="px-6 py-4 font-medium">Date Created</th>
+                                    <SortHeader field="status" label="Status" currentSort={sort} currentDir={dir} username={username} />
+                                    <SortHeader field="createdAt" label="Date Created" currentSort={sort} currentDir={dir} username={username} />
                                     <th className="px-6 py-4 font-medium text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border/50">
                                 {posts.map((post) => (
-                                    <tr key={post.id} className="hover:bg-muted/30 transition-colors group">
+                                    <tr key={post.id} className="hover:bg-muted/30 transition-colors group/row">
                                         <td className="px-6 py-4 font-medium text-foreground">
                                             {post.title}
                                         </td>
@@ -88,7 +119,7 @@ export default async function AdminPostsPage({ params }: { params: Promise<{ use
                                             {formatDate(post.createdAt)}
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <div className="flex items-center justify-end gap-2 opacity-0 group-hover/row:opacity-100 transition-opacity">
                                                 <Link href={`/${username}/posts/${post.id}/edit`}>
                                                     <Button variant="ghost" size="icon" className="rounded-full text-muted-foreground hover:text-blue-500">
                                                         <Pencil className="w-4 h-4" />

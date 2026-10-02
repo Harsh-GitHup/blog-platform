@@ -20,6 +20,8 @@ Blogify is designed to be fully serverless-ready, offering dynamic multi-author 
 - **Beautiful UI/UX**: Custom HSL-based color palette, seamless dark mode, reusable confirmation modals, and synchronized dynamic page titles.
 - **Adaptive Responsive Design**: Intelligent UI that fluidly adapts to extreme narrow viewports (e.g., dynamically transforming long dates into micro-formats and collapsing metadata text on smaller screens to prevent layout shifting).
 - **Contextual Hero Actions**: The primary landing page dynamically reads the NextAuth session, presenting personalized CTAs (like "Share Your Thoughts") to authenticated authors seamlessly.
+- **Interactive Dashboard Data**: Post management tables support dynamic server-side sorting (asc/desc) across columns (Title, Status, Date) via seamless URL parameters and responsive hover interfaces.
+- **Resilient Navigation State**: Authentication redirects intentionally bypass Next.js client-side router caching hangs by utilizing hard window reloads, guaranteeing fresh server contexts post-login.
 
 ---
 

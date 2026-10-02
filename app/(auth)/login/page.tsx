@@ -57,8 +57,7 @@ export default function LoginPage() {
             setIsLoading(false)
         } else {
             toast.success("Welcome back!")
-            router.push("/admin")
-            router.refresh()
+            window.location.href = "/"
         }
     }
 
