@@ -13,6 +13,8 @@ Blogify is designed to be fully serverless-ready, offering dynamic multi-author 
 - **Robust Media Management**: Secure image uploads via UploadThing, wrapped in NextAuth middleware. Includes an automated Orphaned Image Cleanup system to permanently delete unlinked media.
 - **Server-Side Data Mutations**: Relies entirely on Next.js 15 Server Actions for secure, API-less database operations.
 - **Rich Text Editing**: Integrated **Tiptap** editor delivering an elegant, block-style writing experience.
+- **Automated Seeding Architecture**: Fully scriptable database seeding system driven by external JSON configurations, seamlessly resetting the database for automated tests or local environments.
+- **Enterprise-Grade Security & E2E Testing**: Exhaustive route-protection logic verified by a robust **Playwright End-to-End** testing suite to ensure stringent user isolation boundaries.
 - **Beautiful UI/UX**: Custom HSL-based color palette, seamless dark mode, reusable confirmation modals, and synchronized dynamic page titles.
 
 ---
@@ -30,6 +32,7 @@ Blogify is designed to be fully serverless-ready, offering dynamic multi-author 
 | **Rich Text Editor** | Tiptap |
 | **File Storage** | UploadThing |
 | **Validation** | Zod, React Hook Form |
+| **Testing** | Playwright (E2E), Jest (Unit) |
 
 ---
 
@@ -91,6 +94,7 @@ The MongoDB database is managed by **Prisma** using native `ObjectId` relations.
 │   ├── auth.ts             # NextAuth configuration
 │   └── pusher.ts           # Real-time WebSocket clients
 └── prisma/
+    ├── seed.ts             # Seed the database with sample data
     └── schema.prisma       # Database architecture definition
 ```
 
@@ -132,10 +136,11 @@ PUSHER_SECRET="..."
 NEXT_PUBLIC_PUSHER_CLUSTER="..."
 ```
 
-### 4. Initialize Database
+### 4. Initialize Database & Seed
 ```bash
 npx prisma generate
 npx prisma db push
+npm run prisma db seed
 ```
 
 ### 5. Start Development Server
@@ -143,6 +148,15 @@ npx prisma db push
 npm run dev
 ```
 Navigate to `http://localhost:3000` to view the application.
+
+---
+
+## ☁️ Vercel Deployment
+
+Blogify is highly optimized for deployment to [Vercel](https://vercel.com).
+1. Import your repository into the Vercel Dashboard.
+2. In the "Environment Variables" section, supply your MongoDB Atlas `DATABASE_URL` and all required OAuth/Pusher secrets.
+3. The platform will automatically execute the Prisma Client generation step during `npm run build` and launch natively on Vercel's Edge network. Image domains (`unsplash.com`, `pravatar.cc`) are strictly authorized in `next.config.mjs` for seamless production optimization.
 
 ---
 
