@@ -16,8 +16,8 @@ export default async function AdminDashboard({ params }: { params: Promise<{ use
     const session = await getServerSession(authOptions)
     const { username } = await params
 
-    // Check if logged in AND if they are an ADMIN
-    if (!session || session.user.role !== "ADMIN") {
+    // Check if user is logged in
+    if (!session) {
         redirect("/") // Send non-admins back to home
     }
 

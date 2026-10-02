@@ -13,7 +13,7 @@ export default async function DashboardLayout({
     const { username } = await params
 
     // Check if user is logged in
-    if (!session || session.user.role !== "ADMIN") {
+    if (!session) {
         redirect("/")
     }
 

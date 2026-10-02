@@ -19,7 +19,7 @@ interface EditPostPageProps {
 export default async function EditPostPage({ params }: EditPostPageProps) {
     const session = await getServerSession(authOptions)
     
-    if (!session || session.user.role !== "ADMIN") {
+    if (!session) {
         redirect("/")
     }
 

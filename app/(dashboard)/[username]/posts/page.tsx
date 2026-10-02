@@ -17,7 +17,7 @@ export default async function AdminPostsPage({ params }: { params: Promise<{ use
     const session = await getServerSession(authOptions)
     const { username } = await params
 
-    if (!session || session.user.role !== "ADMIN") {
+    if (!session) {
         redirect("/")
     }
 
