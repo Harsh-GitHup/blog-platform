@@ -1,4 +1,6 @@
 // app/blog/[slug]/page.tsx
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { notFound } from "next/navigation"
 import { formatDate } from "@/lib/utils"
@@ -15,7 +17,7 @@ interface PostPageProps {
 export async function generateMetadata({ params }: PostPageProps) {
     const { slug } = await params
     const post = await db.post.findUnique({ where: { slug } })
-    if (!post) return { title: "Post Not Found" }
+    if (!post || post.status !== "PUBLISHED") return { title: "Post Not Found" }
     return { title: post.title, description: post.excerpt }
 }
 
@@ -41,6 +43,13 @@ export default async function PostPage({ params }: PostPageProps) {
     })
 
     if (!post) notFound()
+    
+    const session = await getServerSession(authOptions)
+    if (post.status !== "PUBLISHED") {
+        if (!session || session.user.id !== post.authorId) {
+            notFound()
+        }
+    }
 
     // Build comment tree from flat list
     const commentMap = new Map()

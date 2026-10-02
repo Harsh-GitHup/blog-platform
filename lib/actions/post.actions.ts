@@ -15,6 +15,7 @@ export type CreatePostInput = {
     authorId: string
     categoryId?: string
     tagIds: string[]
+    status?: "PUBLISHED" | "DRAFT"
 }
 
 export async function createPost(data: CreatePostInput) {
@@ -24,6 +25,8 @@ export async function createPost(data: CreatePostInput) {
             return { success: false, error: "Unauthorized" }
         }
 
+        const postStatus = data.status || "DRAFT"
+        
         const post = await db.post.create({
             data: {
                 title: data.title,
@@ -34,8 +37,8 @@ export async function createPost(data: CreatePostInput) {
                 authorId: data.authorId,
                 categoryId: data.categoryId,
                 tagIds: data.tagIds,
-                status: "PUBLISHED",
-                publishedAt: new Date(),
+                status: postStatus,
+                publishedAt: postStatus === "PUBLISHED" ? new Date() : null,
             },
         })
 
@@ -61,9 +64,14 @@ export async function updatePost(id: string, data: Partial<CreatePostInput>) {
             return { success: false, error: "Unauthorized or post not found" }
         }
 
+        const updateData: any = { ...data }
+        if (data.status === "PUBLISHED" && !existingPost.publishedAt) {
+            updateData.publishedAt = new Date()
+        }
+
         const post = await db.post.update({
             where: { id },
-            data,
+            data: updateData,
         })
         revalidatePath("/")
         revalidatePath("/blog")

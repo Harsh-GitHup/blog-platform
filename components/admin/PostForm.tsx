@@ -28,6 +28,8 @@ type PostFormValues = z.infer<typeof postSchema>
 export function PostForm({ userId, username, initialData }: { userId: string, username: string, initialData?: any }) {
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
+    const [submitAction, setSubmitAction] = useState<"PUBLISHED" | "DRAFT">("PUBLISHED")
+    const [showCancelModal, setShowCancelModal] = useState(false)
 
     const form = useForm<PostFormValues>({
         resolver: zodResolver(postSchema),
@@ -56,12 +58,13 @@ export function PostForm({ userId, username, initialData }: { userId: string, us
         try {
             let res;
             if (initialData) {
-                res = await updatePost(initialData.id, data);
+                res = await updatePost(initialData.id, { ...data, status: submitAction });
             } else {
                 res = await createPost({
                     ...data,
                     authorId: userId,
                     tagIds: [],
+                    status: submitAction,
                 });
             }
             
@@ -175,18 +178,77 @@ export function PostForm({ userId, username, initialData }: { userId: string, us
             <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-3 pt-6 pb-10 border-t border-border/50">
                 <Button 
                     type="button" 
-                    variant="outline" 
+                    variant="ghost" 
                     size="lg" 
                     disabled={isLoading} 
-                    onClick={() => router.push(`/${username}/posts`)} 
+                    onClick={() => setShowCancelModal(true)} 
                     className="w-full sm:w-auto"
                 >
                     Cancel
                 </Button>
-                <Button type="submit" size="lg" disabled={isLoading} className="w-full sm:w-auto">
-                    {isLoading ? (initialData ? "Saving Changes..." : "Publishing...") : (initialData ? "Save Changes" : "Publish Post")}
+                <Button 
+                    type="submit" 
+                    variant="outline" 
+                    size="lg" 
+                    disabled={isLoading} 
+                    onClick={() => setSubmitAction("DRAFT")}
+                    className="w-full sm:w-auto"
+                >
+                    {isLoading && submitAction === "DRAFT" ? "Saving..." : "Save as Draft"}
+                </Button>
+                <Button 
+                    type="submit" 
+                    size="lg" 
+                    disabled={isLoading} 
+                    onClick={() => setSubmitAction("PUBLISHED")}
+                    className="w-full sm:w-auto"
+                >
+                    {isLoading && submitAction === "PUBLISHED" ? (initialData ? "Publishing..." : "Publishing...") : (initialData ? "Publish Changes" : "Publish Post")}
                 </Button>
             </div>
+
+            {showCancelModal && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
+                    <div className="bg-card border shadow-xl rounded-xl max-w-md w-full p-6 space-y-6 animate-in fade-in zoom-in-95 duration-200">
+                        <div className="space-y-2 text-center">
+                            <h3 className="text-xl font-bold">Unsaved Changes</h3>
+                            <p className="text-muted-foreground text-sm">
+                                Would you like to save your progress as a draft before leaving?
+                            </p>
+                        </div>
+                        <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                            <Button 
+                                type="button"
+                                variant="outline" 
+                                onClick={() => setShowCancelModal(false)}
+                                className="flex-1"
+                            >
+                                Continue Editing
+                            </Button>
+                            <Button 
+                                type="button"
+                                variant="destructive" 
+                                onClick={() => router.push(`/${username}/posts`)}
+                                className="flex-1"
+                            >
+                                Discard
+                            </Button>
+                            <Button 
+                                type="button"
+                                variant="default"
+                                onClick={() => {
+                                    setShowCancelModal(false);
+                                    setSubmitAction("DRAFT");
+                                    form.handleSubmit(onSubmit)();
+                                }}
+                                className="flex-1"
+                            >
+                                Save as Draft
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </form>
     )
 }
