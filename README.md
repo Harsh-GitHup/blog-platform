@@ -108,6 +108,7 @@ The MongoDB database is managed by **Prisma** using native `ObjectId` relations.
 │   ├── unit/               # Unit tests (Vitest)
 │   └── utils/              # Test utilities
 └── prisma/
+    ├── generate-seed.mjs   # Generate seed data for testing
     ├── seed.ts             # Seed the database with sample data
     └── schema.prisma       # Database architecture definition
 ```

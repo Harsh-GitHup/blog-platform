@@ -4,6 +4,19 @@ const prisma = new PrismaClient()
 async function main() {
     console.log('Starting seed...')
 
+    // Clean up existing data to prevent unique constraint violations on re-seed
+    console.log('Cleaning up existing database...')
+    await prisma.commentLike.deleteMany({})
+    await prisma.like.deleteMany({})
+    await prisma.comment.deleteMany({ where: { parentId: { not: null } } })
+    await prisma.comment.deleteMany({})
+    await prisma.post.deleteMany({})
+    await prisma.tag.deleteMany({})
+    await prisma.category.deleteMany({})
+    await prisma.account.deleteMany({})
+    await prisma.user.deleteMany({})
+    console.log('Database cleaned.')
+
     // Read data from external JSON file
     const fs = require('fs')
     const path = require('path')
@@ -23,6 +36,32 @@ async function main() {
         }
     }
     console.log('Created users.')
+
+    // 1.5 Create accounts
+    if (seedData.accounts) {
+        for (const accountData of seedData.accounts) {
+            const userId = users[accountData.userUsername]
+            if (!userId) continue;
+
+            await prisma.account.upsert({
+                where: {
+                    provider_providerAccountId: {
+                        provider: accountData.provider,
+                        providerAccountId: accountData.providerAccountId
+                    }
+                },
+                update: {},
+                create: {
+                    userId,
+                    type: accountData.type,
+                    provider: accountData.provider,
+                    providerAccountId: accountData.providerAccountId,
+                    access_token: accountData.access_token
+                }
+            })
+        }
+        console.log('Created accounts.')
+    }
 
     // 2. Create sample categories
     const categories = []
@@ -48,7 +87,8 @@ async function main() {
     }
     console.log('Created tags.')
 
-    // 4. Create sample posts
+    // 4. Create sample posts & track their DB IDs
+    const postDbIds: Record<string, string> = {}
     for (const postData of seedData.posts) {
         const publishedAt = postData.publishedDaysAgo !== null
             ? new Date(Date.now() - 86400000 * postData.publishedDaysAgo)
@@ -72,13 +112,70 @@ async function main() {
             authorId
         };
 
-        await prisma.post.upsert({
+        const createdPost = await prisma.post.upsert({
             where: { slug: postData.slug },
             update: postPayload,
             create: postPayload as any
         })
+        
+        postDbIds[createdPost.slug] = createdPost.id
     }
     console.log('Created sample posts.')
+
+    // 5. Create Comments and Nested Replies
+    const commentDbIds: Record<string, string> = {}
+    
+    // Separate top-level comments from replies to maintain relational integrity
+    const topLevelComments = seedData.comments.filter((c: any) => c.parentId === null)
+    const replies = seedData.comments.filter((c: any) => c.parentId !== null)
+
+    // A. Insert top-level comments first
+    for (const comment of topLevelComments) {
+        const authorId = users[comment.authorUsername]
+        const postId = postDbIds[comment.postSlug]
+        
+        if (!authorId || !postId) continue
+
+        const createdAt = new Date(Date.now() - 86400000 * (comment.createdAtDaysAgo || 0))
+
+        const createdComment = await prisma.comment.create({
+            data: {
+                content: comment.content,
+                userId: authorId,
+                sessionId: "seed-session",
+                postId,
+                createdAt
+            }
+        })
+        
+        // Map the temporary JSON id to the real database ID
+        commentDbIds[comment.id] = createdComment.id
+    }
+
+    // B. Insert nested replies using the newly generated parent IDs
+    for (const reply of replies) {
+        const authorId = users[reply.authorUsername]
+        const postId = postDbIds[reply.postSlug]
+        const parentId = commentDbIds[reply.parentId] // Retrieve real DB parent ID
+        
+        if (!authorId || !postId || !parentId) continue
+
+        const createdAt = new Date(Date.now() - 86400000 * (reply.createdAtDaysAgo || 0))
+
+        const createdReply = await prisma.comment.create({
+            data: {
+                content: reply.content,
+                userId: authorId,
+                sessionId: "seed-session",
+                postId,
+                parentId,
+                createdAt
+            }
+        })
+        
+        commentDbIds[reply.id] = createdReply.id
+    }
+    console.log('Created comments and replies.')
 
     console.log('Seed completed successfully.')
 }
