@@ -8,14 +8,18 @@ Blogify is designed to be fully serverless-ready, offering dynamic multi-author 
 
 ## 🚀 Key Features
 
-- **Multi-Author Architecture**: Dynamic `/[username]` routing provides dedicated dashboards for individual authors, backed by strict data isolation ensuring users can only manage their own content.
+- **Multi-Author Architecture**: Dynamic `/[username]` routing provides dedicated dashboards for individual authors. Open to all registered users with strict data isolation ensuring users can only manage their own content.
+- **Draft & Publish Workflow**: Advanced Post Editor featuring a "Save as Draft" system with protective "Unsaved Changes" cancellation modals to prevent accidental data loss. Drafts are strictly protected from public access.
 - **Advanced Real-Time Commenting**: Supports infinite recursive nested replies. Powered by WebSockets to instantly broadcast new comments and likes to active readers.
+- **Performance Optimized**: Native Next.js LCP (Largest Contentful Paint) image preloading across indexes and highly-optimized TipTap editor instances for fluid rendering.
 - **Robust Media Management**: Secure image uploads via UploadThing, wrapped in NextAuth middleware. Includes an automated Orphaned Image Cleanup system to permanently delete unlinked media.
 - **Server-Side Data Mutations**: Relies entirely on Next.js 15 Server Actions for secure, API-less database operations.
 - **Rich Text Editing**: Integrated **Tiptap** editor delivering an elegant, block-style writing experience.
 - **Automated Seeding Architecture**: Fully scriptable database seeding system driven by external JSON configurations, seamlessly resetting the database for automated tests or local environments.
 - **Enterprise-Grade Security & E2E Testing**: Exhaustive route-protection logic verified by a robust **Playwright End-to-End** testing suite to ensure stringent user isolation boundaries.
 - **Beautiful UI/UX**: Custom HSL-based color palette, seamless dark mode, reusable confirmation modals, and synchronized dynamic page titles.
+- **Adaptive Responsive Design**: Intelligent UI that fluidly adapts to extreme narrow viewports (e.g., dynamically transforming long dates into micro-formats and collapsing metadata text on smaller screens to prevent layout shifting).
+- **Contextual Hero Actions**: The primary landing page dynamically reads the NextAuth session, presenting personalized CTAs (like "Share Your Thoughts") to authenticated authors seamlessly.
 
 ---
 
@@ -148,6 +152,16 @@ npm run prisma db seed
 npm run dev
 ```
 Navigate to `http://localhost:3000` to view the application.
+
+### 6. Run E2E Tests (Playwright)
+```bash
+npx playwright test
+```
+
+### 7. Run Component Tests (Vitest)
+```bash
+npm run test
+```
 
 ---
 
